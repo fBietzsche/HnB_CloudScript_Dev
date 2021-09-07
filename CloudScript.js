@@ -13,6 +13,7 @@ var WeaponCount = 16;
 var WeaponMaxLevel = 10;
 var BasicBoxTime = 3600;
 
+
 //Don't access directly. Call getBoombot function
 const boombots = {
     0 : "MekaScorp",
