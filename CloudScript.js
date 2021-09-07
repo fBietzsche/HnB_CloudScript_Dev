@@ -853,7 +853,7 @@ handlers.CheckSlots = function (args) {
         "timer": timer,
         "isAvailable": isAvailable,
         "isTutorial": isTutorial
-    };
+    }
 }
 
 handlers.EndMatch = function (args) {
