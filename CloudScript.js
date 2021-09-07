@@ -682,6 +682,7 @@ handlers.FirstLogin = function () {
         if (i == 0) {
             itemLevel[0] = [
                 1,
+                0,
                 0
             ]
         } else {
