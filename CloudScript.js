@@ -8,10 +8,10 @@
 // This is the test build. Heavily under work in progress. Numbers will be changed.
 
 
-var RobotCount = 4;
-var WeaponCount = 16;
-var WeaponMaxLevel = 10;
-var BasicBoxTime = 3600;
+const RobotCount = 4;
+const WeaponCount = 16;
+const WeaponMaxLevel = 10;
+const BasicBoxTime = 3600;
 
 
 //Don't access directly. Call getBoombot function
@@ -64,24 +64,25 @@ function getMatchDuration(matchType) {
 function winCondition(winArgs) {
     //After win match
     //get player info
-    var PlayerId = winArgs[0];
-    var winnerPlayers = winArgs[1];
-    var loserPlayers = winArgs[2];
-    var drawPlayers = [];
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let PlayerId = winArgs[0];
+    let winnerPlayers = winArgs[1];
+    let loserPlayers = winArgs[2];
+    let drawPlayers = [];
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
     });
-    var currentPlayerTrophy = server.GetPlayerStatistics({
+    let currentPlayerTrophy = server.GetPlayerStatistics({
         PlayFabId: PlayerId,
         "StatisticNames": "Trophy"
     });
-    var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value)
-    var matchStats = JSON.parse(currentPlayerData.Data.matchStats.Value);
-    var matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
-    var ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
-    var accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
-    var doubleBattery = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
+    let slots = JSON.parse(currentPlayerData.Data.slots.Value);
+    let trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value)
+    console.log(currentPlayerTrophy)
+    let matchStats = JSON.parse(currentPlayerData.Data.matchStats.Value);
+    let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
+    let ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
+    let accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
+    let doubleBattery = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
 
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
@@ -92,13 +93,16 @@ function winCondition(winArgs) {
     // TODO MAX Trophy
     let maxTrophy = currentPlayerData.Data.maxTrophy.Value;
 
-    var accountExpGained = 20
-    var trophyChange = 9
-    var tradedBattery = 0
-    matchStats[0] += 1;
-    accountExp[1] = accountExp[1] + accountExpGained;
 
-    var newTrophy = trophy + trophyChange;
+    //TODO: un-hardcode these values
+    let accountExpGained = 20
+    let trophyChange = 9
+    let tradedBattery = 0
+
+    matchStats[0] += 1;
+    accountExp[1] += accountExpGained;
+
+    let newTrophy = trophy + trophyChange;
 
     if (newTrophy > maxTrophy) {
         maxTrophy = newTrophy
@@ -107,29 +111,35 @@ function winCondition(winArgs) {
     itemLevel[equippedWeaponId][2] += trophyChange;
 
     //give booster if available
-    var currentPlayerInventory = server.GetUserInventory({
+    let currentPlayerInventory = server.GetUserInventory({
         PlayFabId: PlayerId
     });
-    var reserveBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.BR);
-    var oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB)
+
+    let reserveBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.BR);
+    let oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB)
+
+    let batteryGained = 0;
 
     if (reserveBooster >= 15) {
-        var batteryGained = 15;
+        batteryGained = 15;
     } else {
-        var batteryGained = reserveBooster
+        batteryGained = reserveBooster
     }
+
+    let isBoxGiven = 0;
+
     //check for slot availability, start timer
     for (i = 0; i < slots.length; i++) {
         if (slots[i][1] == 1) {
-            var startTime = new Date().getTime() / 1000;
-            var endTime = startTime + BasicBoxTime;
+            let startTime = new Date().getTime() / 1000;
+            let endTime = startTime + BasicBoxTime;
             slots[i][1] = 0;
             slots[i][2] = startTime;
             slots[i][3] = endTime;
-            var isBoxGiven = 1;
+            isBoxGiven = 1;
             break;
         } else {
-            var isBoxGiven = 0
+            isBoxGiven = 0
         }
     }
     //double battery checker
@@ -146,7 +156,7 @@ function winCondition(winArgs) {
     var thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
         oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch[1], accountExpGained, trophyChange, batteryGained]
     matchHistory.unshift(thisMatch);
-    var ongoingMatch = ["0", "0", "0", "0", 0]
+    ongoingMatch = ["0", "0", "0", "0", 0]
     var UpdateUserReadOnlyData = {
         PlayFabId: PlayerId,
         Data: {
@@ -539,7 +549,7 @@ handlers.UnlockReward = function (args) {
     // +++++ TODO return { isRewarded : 1}
 
 }*/
-
+/*
 handlers.Debug = function () {
     var userData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
@@ -590,7 +600,7 @@ handlers.AddNewRobot = function () {
     }
     server.UpdateUserReadOnlyData(updateUserReadOnly);
 }
-
+*/
 handlers.SlotTester = function (args) {
     /*{
         "slot": "0",
