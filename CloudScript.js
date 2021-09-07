@@ -787,10 +787,10 @@ handlers.CheckSlots = function (args) {
     //{Box : boxId}
     //Every time main screen loaded or booster used for accelerate box opening
     //get player info
-    let BoxType = args.Box
-    let isTutorial = 0
-    let timer = [0, 0, 0]
-    let isAvailable = [0, 0, 0]
+    let BoxType = args.Box;
+    let isTutorial = 0;
+    let timer = [0, 0, 0];
+    let isAvailable = [false, false, false];
     let currentPlayerData = server.GetUserReadOnlyData({
         "PlayFabId": currentPlayerId
     });
