@@ -628,43 +628,6 @@ handlers.SlotTester = function (args) {
     }
 }
 
-
-function Slot(isReady, isAvailable, startTime, endTime){
-    this.isReady = isReady;
-    this.isAvailable = isAvailable;
-    this.startTime = startTime;
-    this.endTime = endTime;
-}
-
-function Config(costume, weapon, weaponCostume, playerHasBoombot){
-    this.costume = costume;
-    this.weapon = weapon;
-    this.weaponCostume = weaponCostume;
-    this.playerHasBoombot = playerHasBoombot;
-}
-
-function Weapon(id, weaponLevel, exp)
-{
-    this.id = id;
-    this.name = getWeapon(id);
-    this.weaponLevel = weaponLevel;
-    this.exp = exp;
-}
-
-function Robot(id, config)
-{
-    this.id = id;
-    this.name = getBoombot(id);
-    this.weapons = {};
-    this.config = config;
-
-    for (let i = 0; i < WeaponPerRobot; i++)
-    {
-        this.weapons[id * WeaponPerRobot + i] = new Weapon(id * WeaponPerRobot + i, 0, 0);
-    }
-}
-
-
 handlers.FirstLogin = function () {
     //TODO yeni exp sistemine göre güncellenecek
     /*{
