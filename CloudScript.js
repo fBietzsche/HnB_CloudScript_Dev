@@ -468,7 +468,7 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
-function grantMultipleItems(itemId, amount){
+handlers.grantMultipleItems(itemId, amount){
     let itemIds = [];
 
     for (let i = 0; i < amount; i++){
