@@ -468,7 +468,7 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
-handlers.grantMultipleItems(itemId, amount){
+handlers.grantMultipleItems = function(itemId, amount){
     let itemIds = [];
 
     for (let i = 0; i < amount; i++){
@@ -484,15 +484,15 @@ handlers.grantMultipleItems(itemId, amount){
     server.GrantItemsToUser(itemToGrant);
 }
 
-/*
+
 handlers.UnlockReward = function (args) {
-*/
+
     /*
      {
        "RewardIndex": "0",
      }
      */
-/*
+
     const RewardIndex = args.RewardIndex ? args.RewardIndex : null;
 
     const currentPlayerData = server.GetUserReadOnlyData({
@@ -563,8 +563,8 @@ handlers.UnlockReward = function (args) {
     // +++++ TODO grant reward to user
     // +++++ TODO return { isRewarded : 1}
 
-}*/
-/*
+}
+
 handlers.Debug = function () {
     var userData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
@@ -615,7 +615,7 @@ handlers.AddNewRobot = function () {
     }
     server.UpdateUserReadOnlyData(updateUserReadOnly);
 }
-*/
+
 handlers.SlotTester = function (args) {
     /*{
         "slot": "0",
