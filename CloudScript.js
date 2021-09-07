@@ -468,6 +468,21 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
+function grantMultipleItems(itemId, amount){
+    let itemIds = [];
+
+    for (let i = 0; i < amount; i++){
+        itemIds.push(itemId);
+    }
+
+
+    let itemToGrant = {
+        "PlayFabId": currentPlayerId,
+        "CatalogVersion": "Items",
+        "ItemIds": itemIds
+    };
+    server.GrantItemsToUser(itemToGrant);
+}
 
 /*
 handlers.UnlockReward = function (args) {
