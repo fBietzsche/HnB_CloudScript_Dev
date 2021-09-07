@@ -13,6 +13,7 @@ const WeaponCount = 16;
 const WeaponMaxLevel = 10;
 const BasicBoxTime = 3600;
 
+const SlotCount = 3;
 
 //Don't access directly. Call getBoombot function
 const boombots = {
@@ -47,6 +48,13 @@ const matchDurations = {
     "DeathMatch" : 150
 };
 
+function Slot(isReady, isAvailable, startTime, endTime){
+    this.isReady = isReady;
+    this.isAvailable = isAvailable;
+    this.startTime = startTime;
+    this.endTime = endTime;
+}
+
 function getWeapon(weapon)
 {
     return (typeof weapon === "string") ? Object.keys(weapons).find(key => weapons[key] === weapon) : weapons[weapon];
@@ -76,8 +84,7 @@ function winCondition(winArgs) {
         "StatisticNames": "Trophy"
     });
     let slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    let trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value)
-    console.log(currentPlayerTrophy)
+    let trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value);
     let matchStats = JSON.parse(currentPlayerData.Data.matchStats.Value);
     let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
     let ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
@@ -86,8 +93,9 @@ function winCondition(winArgs) {
 
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
+
     let equippedBoomBotId = getBoombot(equipped[0]);
-    let equippedWeaponId = (4 * equippedBoomBotId) + equipped[2] - 1
+    let equippedWeaponId = (4 * equippedBoomBotId) + equipped[2] - 1;
 
 
     // TODO MAX Trophy
@@ -130,16 +138,16 @@ function winCondition(winArgs) {
 
     //check for slot availability, start timer
     for (i = 0; i < slots.length; i++) {
-        if (slots[i][1] == 1) {
+        if (slots[i].isAvailable === true) {
             let startTime = new Date().getTime() / 1000;
             let endTime = startTime + BasicBoxTime;
-            slots[i][1] = 0;
-            slots[i][2] = startTime;
-            slots[i][3] = endTime;
+            slots[i].isAvailable = false;
+            slots[i].startTime = startTime;
+            slots[i].endTime = endTime;
             isBoxGiven = 1;
             break;
         } else {
-            isBoxGiven = 0
+            isBoxGiven = 0;
         }
     }
     //double battery checker
@@ -633,14 +641,19 @@ handlers.SlotTester = function (args) {
     if (currentTutorialProgress == 2 || currentTutorialProgress == 6) {
         {
             var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-            var whichSlot = args.slot
-            var timer = args.timer
-            slots[whichSlot] = [
+            var whichSlot = args.slot;
+            var timer = args.timer;
+
+            slots[whichSlot].isReady = false;
+            slots[whichSlot].isAvailable = false;
+            slots[whichSlot].startTime = new Date().getTime() / 1000;
+            slots[whichSlot].endTime = slots[whichSlot].startTime + timer;
+            /*slots[whichSlot] = [
                 0,
                 0,
                 (new Date().getTime() / 1000),
                 (new Date().getTime() / 1000) + timer
-            ]
+            ]*/
             starterBoxProgress = currentTutorialProgress == 2 ? 1 : 2;
             var updateUserReadOnly = {
                 PlayFabId: currentPlayerId,
@@ -669,15 +682,15 @@ handlers.FirstLogin = function () {
     var starterBoxProgress = 0
     var accountExp = [1, 0]
     var doubleBattery = 0
-    var slotsBase = [
+    /*var slotsBase = [
         0,
         1,
         0,
         0
-    ]
+    ]*/
     var slots = []
-    for (var j = 0; j < 3; j++) {
-        slots.push(slotsBase)
+    for (var j = 0; j < SlotCount; j++) {
+        slots.push(new Slot(false, true, 0, 0));
     }
     var itemLevelBase = [
         0,
@@ -774,67 +787,73 @@ handlers.CheckSlots = function (args) {
     //{Box : boxId}
     //Every time main screen loaded or booster used for accelerate box opening
     //get player info
-    var BoxType = args.Box
-    var isTutorial = 0
-    var timer = [0, 0, 0]
-    var isAvailable = [0, 0, 0]
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let BoxType = args.Box
+    let isTutorial = 0
+    let timer = [0, 0, 0]
+    let isAvailable = [0, 0, 0]
+    let currentPlayerData = server.GetUserReadOnlyData({
         "PlayFabId": currentPlayerId
     });
-    var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var currentTutorialProgress = JSON.parse(currentPlayerData.Data.tutorialProgress.Value);
-    var starterBoxProgress = JSON.parse(currentPlayerData.Data.starterBoxProgress.Value);
+    let slots = JSON.parse(currentPlayerData.Data.slots.Value);
+    let currentTutorialProgress = JSON.parse(currentPlayerData.Data.tutorialProgress.Value);
+    let starterBoxProgress = JSON.parse(currentPlayerData.Data.starterBoxProgress.Value);
 
     //check for remaining time and give key
-    for (i = 0; i < 3; i++) {
-        var remainingTime = slots[i][3] - (new Date().getTime() / 1000);
-        isAvailable[i] = slots[i][1];
-        if ((remainingTime <= 0) && (isAvailable[i] == 0)) {
+    for (i = 0; i < SlotCount; i++) {
+        let remainingTime = slots[i].endTime - (new Date().getTime() / 1000);
+        isAvailable[i] = currentSlot.isAvailable;
+
+        if ((remainingTime <= 0) && (isAvailable[i] === false)) {
             //reset slot
-            slots[i][0] = 0;
-            slots[i][1] = 1;
-            slots[i][2] = 0;
-            slots[i][3] = 0;
+            slots[i].isReady = false;
+            slots[i].isAvailable = true;
+            slots[i].startTime = 0;
+            slots[i].endTime = 0;
+
             if (starterBoxProgress == 2) {
-                BoxType = "StarterBox"
-                log.debug("currentTutorialProgress before " + currentTutorialProgress)
+                BoxType = "StarterBox";
+                log.debug("currentTutorialProgress before " + currentTutorialProgress);
                 currentTutorialProgress = currentTutorialProgress + 1;
-                log.debug("after " + currentTutorialProgress)
+                log.debug("after " + currentTutorialProgress);
                 starterBoxProgress = starterBoxProgress + 1;
-                var updateUserReadOnly = {
+                let updateUserReadOnly = {
                     PlayFabId: currentPlayerId,
                     Data: {
                         "slots": JSON.stringify(slots),
                         "starterBoxProgress": JSON.stringify(starterBoxProgress),
                         "tutorialProgress": JSON.stringify(currentTutorialProgress)
                     }
-                }
-                var isTutorial = 1
+                };
+                let isTutorial = 1;
                 server.UpdateUserReadOnlyData(updateUserReadOnly);
             }
             else {
-                var updateSlotTimer = {
+                let updateSlotTimer = {
                     PlayFabId: currentPlayerId,
                     Data: { "slots": JSON.stringify(slots) }
                 }
                 server.UpdateUserReadOnlyData(updateSlotTimer);
             }
-            var grantBasicKeyAndBox = {
+
+            let grantBasicKeyAndBox = {
                 "PlayFabId": currentPlayerId,
                 "ItemIds": ["BasicBoxKey", BoxType]
             }
             server.GrantItemsToUser(grantBasicKeyAndBox);
             timer[i] = 0
-        } else if ((isAvailable[i] == 1)) {
+
+        } else if ((isAvailable[i] === true)) {
             timer[i] = -1;
         } else
             timer[i] = remainingTime;
     }
+
+
     return {
         "timer": timer,
         "isAvailable": isAvailable,
         "isTutorial": isTutorial
-    }
+    };
 }
 
 handlers.EndMatch = function (args) {
@@ -920,7 +939,7 @@ handlers.GetMatchResult = function () {
     var availableSlotCount = 0
 
     for (i = 0; i < 3; i++) {
-        if (slots[i][1] == 1) {
+        if (slots[i].isAvailable === true) {
             availableSlotCount += 1
         }
     }
@@ -972,9 +991,9 @@ handlers.SpendRubySlot = function (args) {
     var isUsed = 0;
     var playerRuby = JSON.parse(currentPlayerInventory.VirtualCurrency.RB);
     var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var reqRuby = Math.ceil((slots[whichSlot][3] - (new Date().getTime() / 1000)) / 60);
-    if (playerRuby >= reqRuby && slots[whichSlot][1] == 0 && reqRuby >= 1) {
-        slots[whichSlot][3] = (new Date().getTime() / 1000);
+    var reqRuby = Math.ceil((slots[whichSlot].endTime - (new Date().getTime() / 1000)) / 60);
+    if (playerRuby >= reqRuby && slots[whichSlot].isAvailable === false && reqRuby >= 1) {
+        slots[whichSlot].endTime = (new Date().getTime() / 1000);
         var subBooster = {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "RB",
@@ -1399,12 +1418,12 @@ handlers.FinishTutorial = function (args) {
     */
     if (currentTutorialProgress == 5 && starterBoxProgress == 0) {
         var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-        slots[0] = [
-            0,
-            0,
-            (new Date().getTime() / 1000),
-            (new Date().getTime() / 1000) + BasicBoxTime
-        ]
+
+        slots[0].isReady = false;
+        slots[0].isAvailable = false;
+        slots[0].startTime = (new Date().getTime() / 1000);
+        slots[0].endTime = slots[0].startTime + BasicBoxTime;
+
         starterBoxProgress = 1
 
     }
