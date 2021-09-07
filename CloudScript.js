@@ -801,7 +801,7 @@ handlers.CheckSlots = function (args) {
     //check for remaining time and give key
     for (i = 0; i < SlotCount; i++) {
         let remainingTime = slots[i].endTime - (new Date().getTime() / 1000);
-        isAvailable[i] = currentSlot.isAvailable;
+        isAvailable[i] = slots[i].isAvailable;
 
         if ((remainingTime <= 0) && (isAvailable[i] === false)) {
             //reset slot
@@ -847,7 +847,6 @@ handlers.CheckSlots = function (args) {
         } else
             timer[i] = remainingTime;
     }
-
 
     return {
         "timer": timer,
