@@ -459,15 +459,15 @@ function accountLevelUpCheck() {
 }
 
 
-
+/*
 handlers.UnlockReward = function (args) {
-
+*/
     /*
      {
        "RewardIndex": "0",
      }
      */
-
+/*
     const RewardIndex = args.RewardIndex ? args.RewardIndex : null;
 
     const currentPlayerData = server.GetUserReadOnlyData({
@@ -538,7 +538,7 @@ handlers.UnlockReward = function (args) {
     // +++++ TODO grant reward to user
     // +++++ TODO return { isRewarded : 1}
 
-}
+}*/
 
 handlers.Debug = function () {
     var userData = server.GetUserReadOnlyData({
@@ -1102,7 +1102,7 @@ handlers.EquipItem = function (args) {
 
     server.UpdateUserReadOnlyData(updateEquippedItems);
 }
-
+/*
 handlers.GetUserGameplayConfig = function (args) {
     // Gameplay parameters sender function
     args.PlayerId = !args.PlayerId ? {} : args.PlayerId;
@@ -1145,7 +1145,7 @@ handlers.GetUserGameplayConfig = function (args) {
     }
     return gameplayParams;
 }
-
+*/
 handlers.GetUserGameParams = function () {
 
     var userData = server.GetUserReadOnlyData({
@@ -1184,7 +1184,7 @@ handlers.GetUserGameParams = function () {
     }
     return gameParams;
 }
-
+/*
 handlers.CheckUpgrade = function () {
     //TODO Max level durumu eklenecek
     var currentPlayerData = server.GetUserReadOnlyData({
@@ -1230,7 +1230,7 @@ handlers.CheckUpgrade = function () {
         "requiredCoin": requiredCoin
     }
 }
-
+*/
 handlers.UpgradeWeapon = function (args) {
     //usable when an boombot can be upgraded
     args.whichWeapon = !args.whichWeapon ? {} : args.whichWeapon;
