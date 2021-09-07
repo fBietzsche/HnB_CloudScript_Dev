@@ -628,47 +628,7 @@ handlers.SlotTester = function (args) {
     }
 }
 
-
-
-function Weapon(id, weaponLevel, exp)
-{
-    this.id = id;
-    this.name = getWeapon(id);
-    this.weaponLevel = weaponLevel;
-    this.exp = exp;
-}
-
-function Robot(id, config)
-{
-    this.id = id;
-    this.name = getBoombot(id);
-    this.weapons = {};
-    this.config = config;
-
-    for (let i = 0; i < WeaponPerRobot; i++)
-    {
-        this.weapons[id * WeaponPerRobot + i] = new Weapon(id * WeaponPerRobot + i, 0, 0);
-    }
-}
-
-function Slot(isReady, isAvailable, startTime, endTime){
-    this.isReady = isReady;
-    this.isAvailable = isAvailable;
-    this.startTime = startTime;
-    this.endTime = endTime;
-}
-
-function Config(costume, weapon, weaponCostume, playerHasBoombot){
-    this.costume = costume;
-    this.weapon = weapon;
-    this.weaponCostume = weaponCostume;
-    this.playerHasBoombot = playerHasBoombot;
-}
-
-
 handlers.FirstLogin = function () {
-// Açıklama: Kullanıcı hesabı playfab üzerinden ilk açıldığında default user data oluşturup hesaba yazan fonksiyon.
-
     //TODO yeni exp sistemine göre güncellenecek
     /*{
         "isReady": 0,
@@ -678,80 +638,98 @@ handlers.FirstLogin = function () {
     }*/
 
     // TODO Max Trophy
-    let maxTrophy = 0;
-    let lastRewardedProgressIndex = 0;
-    let starterBoxProgress = 0;
-
-    let accountExp = {
-        "level" : 1,
-        "exp" : 0
-    };
-
-    let doubleBattery = 0;
-
-    let slots = [];
-
-    let robots = {};
-
-    let i = 0;
-
-    for (i = 0; i < SlotCount; i++)
-    {
-        slots.push(new Slot(0, 1, 0, 0));
+    var maxTrophy = 0
+    var lastRewardedProgressIndex = 0
+    var starterBoxProgress = 0
+    var accountExp = [1, 0]
+    var doubleBattery = 0
+    var slotsBase = [
+        0,
+        1,
+        0,
+        0
+    ]
+    var slots = []
+    for (var j = 0; j < 3; j++) {
+        slots.push(slotsBase)
     }
-
-    let robotToAdd = new Robot(0, new Config(1, 1, 1, 1));
-    robots[robotToAdd.name] = robotToAdd;
-    for (i = 1; i < RobotCount; i++)
-    {
-        robotToAdd = new Robot(i, new Config(1, 1, 1, 0));
-        robots[robotToAdd.name] = robotToAdd;
+    var itemLevelBase = [
+        0,
+        0,
+        0
+    ]
+    var configsBase = [
+        1,
+        1,
+        1,
+        0
+    ]
+    var itemLevel = []
+    var configs = []
+    for (var k = 0; k < RobotCount; k++) {
+        if (k == 0) {
+            configs[0] = [
+                1,
+                1,
+                1,
+                1
+            ]
+        } else {
+            configs.push(configsBase)
+        }
     }
+    for (var i = 0; i < WeaponCount; i++) {
+        if (i == 0) {
+            itemLevel[0] = [
+                1,
+                0,
+                0
+            ]
+        } else {
+            itemLevel.push(itemLevelBase)
+        }
+    }
+    //log.debug("configs b = " + configs)
+    //itemLevel[0][0] = 1;
+    //configs[0][3] = 1;
+    log.debug("configs a = " + configs)
+    log.debug("itemlevel = " + itemLevel)
+    var equipped = [
+        "MekaScorp",
+        1,
+        1,
+        1
+    ]
 
-    robots[getBoombot(0)].weapons[0].weaponLevel = 1;
+    var matchStats = [
+        0, 0, 0
+    ]
 
-    log.debug("configs a = " + configs);
-    log.debug("itemlevel = " + itemLevels);
-
-    let equipped = {
-        "boombot" : "MekaScorp",
-        "weapon" : 1,
-        "costume" : 1,
-        "weaponCostume" : 1
-    };
-
-    let matchStats = [0, 0, 0];
-    let tutorialProgress = 0;
-    let matchHistory = [];
-    let updatedUserReadOnlyData =
-        {
-            PlayFabId: currentPlayerId,
-            Data:
-                {
-                    "equipped"              :   JSON.stringify(equipped),
-                    "robots"                :   JSON.stringify(robots),
-                    "slots"                 :   JSON.stringify(slots),
-                    "matchStats"            :   JSON.stringify(matchStats),
-                    "matchHistory"          :   JSON.stringify(matchHistory),
-                    "accountExp"            :   JSON.stringify(accountExp),
-                    "doubleBattery"         :   JSON.stringify(doubleBattery),
-                    "tutorialProgress"      :   JSON.stringify(tutorialProgress),
-                    "starterBoxProgress"    :   JSON.stringify(starterBoxProgress)
-                }
-        };
-
-    let updatedUserReadOnlyData2 =
-        {
-            PlayFabId: currentPlayerId,
-            Data:
-                {
-                    "maxTrophy":                    JSON.stringify(maxTrophy),
-                    "lastRewardedProgressIndex":    JSON.stringify(lastRewardedProgressIndex)
-                }
-        };
-
-    server.UpdatePlayerStatistics
-    ({
+    var tutorialProgress = 0;
+    var matchHistory = []
+    var updateUserReadOnly = {
+        PlayFabId: currentPlayerId,
+        Data: {
+            "equipped": JSON.stringify(equipped),
+            "configs": JSON.stringify(configs),
+            "itemLevel": JSON.stringify(itemLevel),
+            "slots": JSON.stringify(slots),
+            "matchStats": JSON.stringify(matchStats),
+            "matchHistory": JSON.stringify(matchHistory),
+            "accountExp": JSON.stringify(accountExp),
+            "doubleBattery": JSON.stringify(doubleBattery),
+            "tutorialProgress": JSON.stringify(tutorialProgress),
+            "starterBoxProgress": JSON.stringify(starterBoxProgress)
+        }
+    }
+    var updateUserReadOnly2 = {
+        PlayFabId: currentPlayerId,
+        Data: {
+            "maxTrophy": JSON.stringify(maxTrophy),
+            "lastRewardedProgressIndex": JSON.stringify(lastRewardedProgressIndex)
+        }
+    }
+    server.UpdatePlayerStatistics({
         "PlayFabId": currentPlayerId,
         "Statistics": [
             {
@@ -759,10 +737,10 @@ handlers.FirstLogin = function () {
                 "Value": 0
             }
         ]
-    });
+    })
 
-    server.UpdateUserReadOnlyData(updatedUserReadOnlyData);
-    server.UpdateUserReadOnlyData(updatedUserReadOnlyData2);
+    server.UpdateUserReadOnlyData(updateUserReadOnly);
+    server.UpdateUserReadOnlyData(updateUserReadOnly2);
 
 }
 
