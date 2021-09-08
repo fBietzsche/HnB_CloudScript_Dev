@@ -1130,6 +1130,15 @@ handlers.SpendRubySlot = function (args) {
 
 }
 
+handlers.test = function (){
+    //TODO: SİL
+    let data = {
+        PlayFabId : currentPlayerId,
+        "itemLevel[0][2]" : 15
+    };
+    server.UpdateUserReadOnlyData(data);
+}
+
 handlers.OpenBox = function (args) {
     //{Box : boxId}
     //when box ready, click to open function
@@ -1189,6 +1198,7 @@ handlers.OpenBox = function (args) {
                     ItemIds: grantItemsIds
                 }
                 server.GrantItemsToUser(grantItems);
+
                 var expAmount = 0
                 var currentExp = 0
             } else {
