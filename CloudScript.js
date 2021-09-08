@@ -94,7 +94,7 @@ function winCondition(winArgs) {
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
 
-    let equippedBoomBotId = equipped.boombotId;
+    let equippedBoomBotId = getBoombot(equipped.boombot);
     let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1;
 
 
@@ -229,7 +229,7 @@ function loseCondition(loseArgs) {
 
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    let equippedBoomBotId = equipped.boombotId;
+    let equippedBoomBotId = getBoombot(equipped.boombotId);
     let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1
 
 
@@ -550,13 +550,24 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
-function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume, playerHasBoombot){
+function Config(boombotId, boombotName, boombotCostume, playerHasBoombot){
     this.boombotId = boombotId;
     this.boombotName = boombotName;
     this.boombotCostume = boombotCostume;
-    this.weapon = weapon;
-    this.weaponCostume = weaponCostume;
+    this.weapons = [];
+
+    for(let i = 0; i < WeaponCount / RobotCount; i++){
+        this.weapons.push(new Weapon(i, getWeapon(i), 1, false));
+    }
+
     this.playerHasBoombot = playerHasBoombot;
+}
+
+function Weapon(weaponId, weaponName, weaponCostume, playerHasWeapon){
+    this.weaponId = weaponId;
+    this.weaponName = weaponName;
+    this.weaponCostume = weaponCostume;
+    this.playerHasWeapon = playerHasWeapon;
 }
 
 function getTimeInSeconds(){
@@ -793,10 +804,11 @@ handlers.FirstLogin = function () {
     let configs = [];
 
     for (let k = 0; k < RobotCount; k++) {
-        configs.push(new Config(k, getBoombot(k), 1, 1, 1, false));
+        configs.push(new Config(k, getBoombot(k), 1, false));
     }
 
     configs[0].playerHasBoombot = true;
+    configs[0].weapons[0].playerHasWeapon = true;
 
     for (let i = 0; i < WeaponCount; i++) {
         if (i == 0) {
@@ -828,7 +840,12 @@ handlers.FirstLogin = function () {
         "weaponCostume" : 1
     };*/
 
-    let equipped = configs[0];
+    let equipped = {
+        "boombot" : configs[0].boombotName,
+        "weapon" : configs[0].weapons[0].weaponId,
+        "boombotCostume" : configs[0].boombotCostume,
+        "weaponCostume" : configs[0].weapons[0].weaponCostume
+    };
 
 
     /*let matchStats = [
@@ -1236,9 +1253,14 @@ handlers.EquipItem = function (args) {
         equipped.weaponCostume = args.wpn;
         equipped.weaponCostume = args.wpnCos;*/
         configs[boomBotId].boombotCostume = args.cos;
-        configs[boomBotId].weapon = args.wpn;
-        configs[boomBotId].weaponCostume = args.wpnCos;
-        equipped = configs[boomBotId];
+        configs[boomBotId][args.wpn].weaponCostume = args.wpnCos;
+        equipped = {
+            "boombot" : configs[boomBotId].boombotName,
+            "weapon" : configs[boomBotId][args.wpn],
+            "costume" : configs[boomBotId].boombotCostume,
+            "weaponCostume" : configs[boomBotId][args.wpn].weaponCostume
+        };
+            //configs[boomBotId];
     }
     let updateEquippedItems = {
         PlayFabId: currentPlayerId,
@@ -1469,8 +1491,7 @@ handlers.FinishTutorial = function (args) {
 
 handlers.GetTutorialProgress = function () {
     var currentPlayerData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
-    var currentTutorialProgress = currentPlayerData.Data.tutorialProgress;
-    return currentTutorialProgress;
+    return currentPlayerData.Data.tutorialProgress;
 }
 
 
