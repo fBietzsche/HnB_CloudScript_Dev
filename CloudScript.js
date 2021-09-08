@@ -94,7 +94,7 @@ function winCondition(winArgs) {
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
 
-    let equippedBoomBotId = getBoombot(equipped.boombot);
+    let equippedBoomBotId = equipped.boombotId;
     let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1;
 
 
@@ -229,7 +229,7 @@ function loseCondition(loseArgs) {
 
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    let equippedBoomBotId = getBoombot(equipped.boombot);
+    let equippedBoomBotId = equipped.boombotId;
     let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1
 
 
@@ -815,13 +815,15 @@ handlers.FirstLogin = function () {
         1
     ];
 */
-    let equipped = {
+    /*let equipped = {
         "boombot" : "MekaScorp",
         "boombotCostume" : 1,
         "weapon" : 1,
         "weaponCostume" : 1
-    };
-    
+    };*/
+
+    let equipped = configs[0];
+
 
     /*let matchStats = [
         0, 0, 0
@@ -1207,25 +1209,26 @@ handlers.EquipItem = function (args) {
     args.wpnCos = !args.wpnCos ? {} : args.wpnCos;
 
     //get player info
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId,
     });
-    var boomBotId = getBoombot(args.boombot)
-    var weaponId = (4 * boomBotId) + args.wpn - 1
+    let boomBotId = getBoombot(args.boombot)
+    let weaponId = (4 * boomBotId) + args.wpn - 1
     //select boombot values
-    var equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
-    var configs = JSON.parse(currentPlayerData.Data.configs.Value);
-    var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
+    let equipped/* = JSON.parse(currentPlayerData.Data.equipped.Value)*/;
+    let configs = JSON.parse(currentPlayerData.Data.configs.Value);
+    let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
     if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId][0] >= 1) {
-        equipped.boombot = args.boombot;
+        /*equipped.boombot = args.boombot;
         equipped.boombotCostume = args.cos;
         equipped.weaponCostume = args.wpn;
-        equipped.weaponCostume = args.wpnCos;
+        equipped.weaponCostume = args.wpnCos;*/
         configs[boomBotId].boombotCostume = args.cos;
         configs[boomBotId].weapon = args.wpn;
         configs[boomBotId].weaponCostume = args.wpnCos;
+        equipped = configs[boomBotId];
     }
-    var updateEquippedItems = {
+    let updateEquippedItems = {
         PlayFabId: currentPlayerId,
         Data: {
             "equipped": JSON.stringify(equipped),
@@ -1235,6 +1238,7 @@ handlers.EquipItem = function (args) {
 
     server.UpdateUserReadOnlyData(updateEquippedItems);
 }
+
 /*
 handlers.GetUserGameplayConfig = function (args) {
     // Gameplay parameters sender function
@@ -1279,6 +1283,7 @@ handlers.GetUserGameplayConfig = function (args) {
     return gameplayParams;
 }
 */
+
 handlers.GetUserGameParams = function () {
 
     var userData = server.GetUserReadOnlyData({
@@ -1308,7 +1313,8 @@ handlers.GetUserGameParams = function () {
     var configs = JSON.parse(userData.Data.configs.Value)
     var itemLevel = JSON.parse(userData.Data.itemLevel.Value)
     var gameParams = {
-        "equipped": [equipped.boombot, equipped.boombotCostume, equipped.weapon, equipped.weaponCostume],
+        //TODO: send as object
+        "equipped": equipped,
         "configs": configs,
         "itemLevel": itemLevel,
         "HealthPoints": HP,
@@ -1490,7 +1496,7 @@ handlers.GetCurrentEquipment = function () {
     var equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
 
     var equipments = {
-        "boombot": getBoombot(equipped.boombot),
+        "boombot": equipped.boombotId,
         "boombotCostume": equipped.boombotCostume,
         "weapon": equipped.weapon,
         "weaponCostume": equipped.weaponCostume,
