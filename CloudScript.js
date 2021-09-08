@@ -94,8 +94,8 @@ function winCondition(winArgs) {
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
 
-    let equippedBoomBotId = getBoombot(equipped[0]);
-    let equippedWeaponId = (4 * equippedBoomBotId) + equipped[2] - 1;
+    let equippedBoomBotId = getBoombot(equipped.boombot);
+    let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1;
 
 
     // TODO MAX Trophy
@@ -229,8 +229,8 @@ function loseCondition(loseArgs) {
 
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    let equippedBoomBotId = getBoombot(equipped[0]);
-    let equippedWeaponId = (4 * equippedBoomBotId) + equipped[2] - 1
+    let equippedBoomBotId = getBoombot(equipped.boombot);
+    let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1
 
 
     var accountExpGained = 10
@@ -802,12 +802,19 @@ handlers.FirstLogin = function () {
     //configs[0][3] = 1;
     log.debug("configs a = " + configs);
     log.debug("itemlevel = " + itemLevel);
-    let equipped = [
+   /* let equipped = [
         "MekaScorp",
         1,
         1,
         1
     ];
+*/
+    let equipped = {
+        "boombot" : "MekaScorp",
+        "boombotCostume" : 1,
+        "weapon" : 1,
+        "weaponCostume" : 1
+    };
 
     /*let matchStats = [
         0, 0, 0
@@ -1203,10 +1210,10 @@ handlers.EquipItem = function (args) {
     var configs = JSON.parse(currentPlayerData.Data.configs.Value);
     var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
     if (configs[boomBotId][3] == 1 && itemLevel[weaponId][0] >= 1) {
-        equipped[0] = args.boombot;
-        equipped[1] = args.cos;
-        equipped[2] = args.wpn;
-        equipped[3] = args.wpnCos;
+        equipped.boombot = args.boombot;
+        equipped.boombotCostume = args.cos;
+        equipped.weaponCostume = args.wpn;
+        equipped.weaponCostume = args.wpnCos;
         configs[boomBotId][0] = args.cos;
         configs[boomBotId][1] = args.wpn;
         configs[boomBotId][2] = args.wpnCos;
@@ -1476,11 +1483,11 @@ handlers.GetCurrentEquipment = function () {
     var equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
 
     var equipments = {
-        "boombot": getBoombot(equipped[0]),
-        "boombotCostume": equipped[1],
-        "weapon": equipped[2],
-        "weaponCostume": equipped[3],
-        "itemLevel": itemLevel[equipped[2]][0]
+        "boombot": getBoombot(equipped.boombot),
+        "boombotCostume": equipped.boombotCostume,
+        "weapon": equipped.weapon,
+        "weaponCostume": equipped.weaponCostume,
+        "itemLevel": itemLevel[equipped.weapon][0]
     }
     return equipments
 }
