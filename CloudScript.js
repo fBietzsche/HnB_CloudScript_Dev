@@ -557,7 +557,7 @@ function Config(boombotId, boombotName, boombotCostume, playerHasBoombot){
     this.weapons = [];
 
     for(let i = 0; i < WeaponCount / RobotCount; i++){
-        this.weapons.push(new Weapon(i, getWeapon(boombotId * (WeaponCount / RobotCount) + i), 1, false));
+        this.weapons.push(new Weapon(i, getWeapon(boombotId * (WeaponCount / RobotCount) + i), 0, false));
     }
 
     this.playerHasBoombot = playerHasBoombot;
@@ -804,7 +804,7 @@ handlers.FirstLogin = function () {
     let configs = [];
 
     for (let k = 0; k < RobotCount; k++) {
-        configs.push(new Config(k, getBoombot(k), 1, false));
+        configs.push(new Config(k, getBoombot(k), 0, false));
     }
 
     configs[0].playerHasBoombot = true;
