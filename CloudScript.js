@@ -1135,7 +1135,7 @@ handlers.test = function (){
     let data = {
         PlayFabId : currentPlayerId,
         Data :{
-            "itemLevel[0][2]" : 15
+            "deneme.isReady" : false
         }
     };
     server.UpdateUserReadOnlyData(data);
