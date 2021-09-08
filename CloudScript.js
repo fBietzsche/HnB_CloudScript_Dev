@@ -886,8 +886,15 @@ handlers.CheckSlots = function (args) {
     //get player info
     let BoxType = args.Box;
     let isTutorial = 0;
-    let timer = [0, 0, 0];
-    let isAvailable = [false, false, false];
+
+    let timer = [];
+    let isAvailable = [];
+
+    for(let i = 0; i < SlotCount; i++){
+        timer.push(0);
+        isAvailable.push(false);
+    }
+
     let currentPlayerData = server.GetUserReadOnlyData({
         "PlayFabId": currentPlayerId
     });
@@ -928,16 +935,16 @@ handlers.CheckSlots = function (args) {
                 let updateSlotTimer = {
                     PlayFabId: currentPlayerId,
                     Data: { "slots": JSON.stringify(slots) }
-                }
+                };
                 server.UpdateUserReadOnlyData(updateSlotTimer);
             }
 
             let grantBasicKeyAndBox = {
                 "PlayFabId": currentPlayerId,
                 "ItemIds": ["BasicBoxKey", BoxType]
-            }
+            };
             server.GrantItemsToUser(grantBasicKeyAndBox);
-            timer[i] = 0
+            timer[i] = 0;
 
         } else if ((isAvailable[i] === true)) {
             timer[i] = -1;
@@ -949,7 +956,7 @@ handlers.CheckSlots = function (args) {
         "timer": timer,
         "isAvailable": isAvailable,
         "isTutorial": isTutorial
-    }
+    };
 }
 
 handlers.EndMatch = function (args) {
@@ -965,9 +972,9 @@ handlers.EndMatch = function (args) {
     args.loserPlayers = !args.loserPlayers ? {} : args.loserPlayers;
     args.drawPlayers = !args.drawPlayers ? {} : args.drawPlayers;
 
-    var winnerPlayers = args.winnerPlayers;
-    var loserPlayers = args.loserPlayers;
-    var drawPlayers = args.drawPlayers;
+    let winnerPlayers = args.winnerPlayers;
+    let loserPlayers = args.loserPlayers;
+    let drawPlayers = args.drawPlayers;
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
         let winArgs = [winnerPlayers[i], winnerPlayers, loserPlayers];
@@ -985,8 +992,7 @@ handlers.EndMatch = function (args) {
         let drawArgs = [drawPlayers[i], drawPlayers];
         drawCondition(drawArgs)
     }
-    return 1
-
+    return 1;
 }
 
 handlers.EndMatchUpdate = function (args) {
@@ -1492,27 +1498,25 @@ handlers.GetOngoingMatch = function () {
 
 handlers.GetCurrentEquipment = function () {
 
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    var equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
+    let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
+    let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
 
-    var equipments = {
+    return {
         "boombot": equipped.boombotId,
         "boombotCostume": equipped.boombotCostume,
         "weapon": equipped.weapon,
         "weaponCostume": equipped.weaponCostume,
         "itemLevel": itemLevel[equipped.weapon][0]
     }
-    return equipments
 }
 
 handlers.FinishTutorial = function (args) {
-
-    var currentPlayerData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
-    var currentTutorialProgress = JSON.parse(currentPlayerData.Data.tutorialProgress.Value);
-    var starterBoxProgress = JSON.parse(currentPlayerData.Data.starterBoxProgress.Value);
+    let currentPlayerData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
+    let currentTutorialProgress = JSON.parse(currentPlayerData.Data.tutorialProgress.Value);
+    let starterBoxProgress = JSON.parse(currentPlayerData.Data.starterBoxProgress.Value);
     currentTutorialProgress = args.Value;
     /*var UpdateUserReadOnlyData =
     {
@@ -1531,8 +1535,7 @@ handlers.FinishTutorial = function (args) {
         slots[0].startTime = getTimeInSeconds();
         slots[0].endTime = slots[0].startTime + BasicBoxTime;
 
-        starterBoxProgress = 1
-
+        starterBoxProgress = 1;
     }
     if (currentTutorialProgress == 5 && starterBoxProgress == 1) {
         //todo add player data check if it was given before to ensure only once adding of batteries
@@ -1544,7 +1547,7 @@ handlers.FinishTutorial = function (args) {
         server.AddUserVirtualCurrency(addBooster);
         starterBoxProgress = 2
     }
-    var updateUserReadOnly = {
+    let updateUserReadOnly = {
         PlayFabId: currentPlayerId,
         Data: {
             "slots": JSON.stringify(slots),
