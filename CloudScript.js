@@ -139,7 +139,7 @@ function winCondition(winArgs) {
     //check for slot availability, start timer
     for (i = 0; i < slots.length; i++) {
         if (slots[i].isAvailable === true) {
-            let startTime = new Date().getTime() / 1000;
+            let startTime = getTimeInSeconds();
             let endTime = startTime + BasicBoxTime;
             slots[i].isAvailable = false;
             slots[i].startTime = startTime;
@@ -550,6 +550,19 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
+function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume, playerHasBoombot){
+    this.boombotId = boombotId;
+    this.boombotName = boombotName;
+    this.boombotCostume = boombotCostume;
+    this.weapon = weapon;
+    this.weaponCostume = weaponCostume;
+    this.playerHasBoombot = playerHasBoombot;
+}
+
+function getTimeInSeconds(){
+    return getTimeInSeconds();
+}
+
 handlers.GrantMultipleItems = function(args){
     let itemIds = [];
     let itemId = args.itemId;
@@ -720,13 +733,13 @@ handlers.SlotTester = function (args) {
 
             slots[whichSlot].isReady = false;
             slots[whichSlot].isAvailable = false;
-            slots[whichSlot].startTime = new Date().getTime() / 1000;
+            slots[whichSlot].startTime = getTimeInSeconds();
             slots[whichSlot].endTime = slots[whichSlot].startTime + timer;
             /*slots[whichSlot] = [
                 0,
                 0,
-                (new Date().getTime() / 1000),
-                (new Date().getTime() / 1000) + timer
+                (getTimeInSeconds),
+                (getTimeInSeconds) + timer
             ]*/
             starterBoxProgress = currentTutorialProgress == 2 ? 1 : 2;
             var updateUserReadOnly = {
@@ -741,14 +754,7 @@ handlers.SlotTester = function (args) {
     }
 }
 
-function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume, playerHasBoombot){
-    this.boombotId = boombotId;
-    this.boombotName = boombotName;
-    this.boombotCostume = boombotCostume;
-    this.weapon = weapon;
-    this.weaponCostume = weaponCostume;
-    this.playerHasBoombot = playerHasBoombot;
-}
+
 
 handlers.FirstLogin = function () {
     //TODO yeni exp sistemine göre güncellenecek
@@ -891,7 +897,7 @@ handlers.CheckSlots = function (args) {
 
     //check for remaining time and give key
     for (i = 0; i < SlotCount; i++) {
-        let remainingTime = slots[i].endTime - (new Date().getTime() / 1000);
+        let remainingTime = slots[i].endTime - getTimeInSeconds();
         isAvailable[i] = slots[i].isAvailable;
 
         if ((remainingTime <= 0) && (isAvailable[i] === false)) {
@@ -1050,9 +1056,9 @@ handlers.SpendBoosterSlot = function (args) {
     var isUsed = 0;
     var playerBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB);
     var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var reqBooster = Math.ceil((slots[whichSlot][3] - (new Date().getTime() / 1000)) / 60);
+    var reqBooster = Math.ceil((slots[whichSlot][3] - getTimeInSeconds()) / 60);
     if (playerBooster >= reqBooster && slots[whichSlot][1] == 0 && reqBooster >= 1) {
-        slots[whichSlot][3] = (new Date().getTime() / 1000);
+        slots[whichSlot][3] = getTimeInSeconds();
         var subBooster = {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "TB",
@@ -1081,9 +1087,9 @@ handlers.SpendRubySlot = function (args) {
     var isUsed = 0;
     var playerRuby = JSON.parse(currentPlayerInventory.VirtualCurrency.RB);
     var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var reqRuby = Math.ceil((slots[whichSlot].endTime - (new Date().getTime() / 1000)) / 60);
+    var reqRuby = Math.ceil((slots[whichSlot].endTime - getTimeInSeconds()) / 60);
     if (playerRuby >= reqRuby && slots[whichSlot].isAvailable === false && reqRuby >= 1) {
-        slots[whichSlot].endTime = (new Date().getTime() / 1000);
+        slots[whichSlot].endTime = getTimeInSeconds();
         var subBooster = {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "RB",
@@ -1285,43 +1291,40 @@ handlers.GetUserGameplayConfig = function (args) {
 */
 
 handlers.GetUserGameParams = function () {
-
-    var userData = server.GetUserReadOnlyData({
+    let userData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var titleData = server.GetTitleData({
+    let titleData = server.GetTitleData({
         PlayFabId: currentPlayerId,
         "Keys": ["levelData", "weaponValues"]
     });
-    var weaponData = JSON.parse(titleData.Data.weaponValues);
-    var itemLevel = JSON.parse(userData.Data.itemLevel.Value);
-    var levelData = JSON.parse(titleData.Data.levelData)
-    var HP = []
-    var DMG = []
-    var nextLevel = []
-    var nextExp = levelData.levelRamp;
-    var nextCoin = levelData.levelCoin;
+    let weaponData = JSON.parse(titleData.Data.weaponValues);
+    let itemLevel = JSON.parse(userData.Data.itemLevel.Value);
+    let levelData = JSON.parse(titleData.Data.levelData);
+    let HP = [];
+    let DMG = [];
+    let nextLevel = [];
+    let nextExp = levelData.levelRamp;
+    let nextCoin = levelData.levelCoin;
     for (i = 0; i < WeaponCount; i++) {
-        nextLevel.push([])
-        DMG.push([])
-        HP[i] = weaponData[i][7] + (weaponData[i][7] * (itemLevel[i][0] - 1) * 0.05)
-        nextLevel[i][0] = nextExp[itemLevel[i][0]]
-        nextLevel[i][1] = nextCoin[itemLevel[i][0]]
-        DMG[i] = Math.round(weaponData[i][0] + (weaponData[i][0] * (itemLevel[i][0] - 1) * 0.05))
+        nextLevel.push([]);
+        DMG.push([]);
+        HP[i] = weaponData[i][7] + (weaponData[i][7] * (itemLevel[i][0] - 1) * 0.05);
+        nextLevel[i][0] = nextExp[itemLevel[i][0]];
+        nextLevel[i][1] = nextCoin[itemLevel[i][0]];
+        DMG[i] = Math.round(weaponData[i][0] + (weaponData[i][0] * (itemLevel[i][0] - 1) * 0.05));
     }
-    var equipped = JSON.parse(userData.Data.equipped.Value)
-    var configs = JSON.parse(userData.Data.configs.Value)
-    var itemLevel = JSON.parse(userData.Data.itemLevel.Value)
-    var gameParams = {
-        //TODO: send as object
+    let equipped = JSON.parse(userData.Data.equipped.Value);
+    let configs = JSON.parse(userData.Data.configs.Value);
+
+    return {
         "equipped": equipped,
         "configs": configs,
         "itemLevel": itemLevel,
         "HealthPoints": HP,
         "Damage": DMG,
         "nextLevel": nextLevel
-    }
-    return gameParams;
+    };
 }
 /*
 handlers.CheckUpgrade = function () {
@@ -1444,14 +1447,14 @@ handlers.OnMatchStart = function (args) {
         "matchId" : args.MatchId,
         "matchType" : args.MatchType,
         "address" : args.Adress,
-        "date" :  new Date().getTime() / 1000
+        "date" :  getTimeInSeconds()
     };
 
     /*ongoingMatch[0] = args.PlayerGameliftId
     ongoingMatch[1] = args.MatchId
     ongoingMatch[2] = args.MatchType
     ongoingMatch[3] = args.Adress
-    ongoingMatch[4] = new Date().getTime() / 1000*/
+    ongoingMatch[4] = getTimeInSeconds*/
     var UpdateUserReadOnlyData = {
         PlayFabId: currentPlayerId,
         Data: {
@@ -1473,7 +1476,7 @@ handlers.GetOngoingMatch = function () {
     };
     /*   var matchDuration = getMatchDuration(ongoingMatch[2])
        var matchEndTime = ongoingMatch[4] + matchDuration
-       if (matchEndTime > ((new Date().getTime() / 1000) + 15)) {
+       if (matchEndTime > ((getTimeInSeconds) + 15)) {
           var reconnectData = {
                "PlayerGameliftId": ongoingMatch[0],
                "Adress": ongoingMatch[3]
@@ -1525,7 +1528,7 @@ handlers.FinishTutorial = function (args) {
 
         slots[0].isReady = false;
         slots[0].isAvailable = false;
-        slots[0].startTime = (new Date().getTime() / 1000);
+        slots[0].startTime = getTimeInSeconds();
         slots[0].endTime = slots[0].startTime + BasicBoxTime;
 
         starterBoxProgress = 1
