@@ -560,7 +560,7 @@ function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume, p
 }
 
 function getTimeInSeconds(){
-    return getTimeInSeconds();
+    return new Date().getTime() / 1000;
 }
 
 handlers.GrantMultipleItems = function(args){
