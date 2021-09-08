@@ -107,7 +107,7 @@ function winCondition(winArgs) {
     let trophyChange = 9
     let tradedBattery = 0
 
-    matchStats[0] += 1;
+    matchStats.winCount += 1;
     accountExp[1] += accountExpGained;
 
     let newTrophy = trophy + trophyChange;
@@ -212,7 +212,7 @@ function loseCondition(loseArgs) {
     if (trophy >= 50) {
         trophyChange = (-1)*(1 + Math.floor(trophy / 100))
     }
-    matchStats[1] += 1;
+    matchStats.loseCount += 1;
     accountExp[1] = accountExp[1] + accountExpGained;
 
     //TODO: potential bug? trophy will never be less than trophyChange
@@ -300,7 +300,7 @@ function drawCondition(drawArgs) {
     var trophyChange = 0
     var tradedBattery = 0
     accountExp[1] = accountExp[1] + accountExpGained;
-    matchStats[2] += 1;
+    matchStats.drawCount += 1;
     if (reserveBooster >= 10) {
         var batteryGained = 10;
     } else {
@@ -677,76 +677,77 @@ handlers.FirstLogin = function () {
     }*/
 
     // TODO Max Trophy
-    var maxTrophy = 0
-    var lastRewardedProgressIndex = 0
-    var starterBoxProgress = 0
-    var accountExp = [1, 0]
-    var doubleBattery = 0
-    /*var slotsBase = [
-        0,
-        1,
-        0,
-        0
-    ]*/
-    var slots = []
-    for (var j = 0; j < SlotCount; j++) {
+    let maxTrophy = 0;
+    let lastRewardedProgressIndex = 0;
+    let starterBoxProgress = 0;
+    let accountExp = [1, 0];
+    let doubleBattery = 0;
+
+    let slots = [];
+    for (let j = 0; j < SlotCount; j++) {
         slots.push(new Slot(false, true, 0, 0));
     }
-    var itemLevelBase = [
+    let itemLevelBase = [
         0,
         0,
         0
-    ]
-    var configsBase = [
+    ];
+    let configsBase = [
         1,
         1,
         1,
         0
-    ]
-    var itemLevel = []
-    var configs = []
-    for (var k = 0; k < RobotCount; k++) {
+    ];
+    let itemLevel = [];
+    let configs = [];
+    for (let k = 0; k < RobotCount; k++) {
         if (k == 0) {
             configs[0] = [
                 1,
                 1,
                 1,
                 1
-            ]
+            ];
         } else {
-            configs.push(configsBase)
+            configs.push(configsBase);
         }
     }
-    for (var i = 0; i < WeaponCount; i++) {
+    for (let i = 0; i < WeaponCount; i++) {
         if (i == 0) {
             itemLevel[0] = [
                 1,
                 0,
                 0
-            ]
+            ];
         } else {
-            itemLevel.push(itemLevelBase)
+            itemLevel.push(itemLevelBase);
         }
     }
     //log.debug("configs b = " + configs)
     //itemLevel[0][0] = 1;
     //configs[0][3] = 1;
-    log.debug("configs a = " + configs)
-    log.debug("itemlevel = " + itemLevel)
-    var equipped = [
+    log.debug("configs a = " + configs);
+    log.debug("itemlevel = " + itemLevel);
+    let equipped = [
         "MekaScorp",
         1,
         1,
         1
-    ]
+    ];
 
-    var matchStats = [
+    /*let matchStats = [
         0, 0, 0
-    ]
+    ];*/
 
-    var tutorialProgress = 0;
-    var matchHistory = []
-    var updateUserReadOnly = {
+    let matchStats = {
+        "winCount" : 0,
+        "loseCount" : 0,
+        "drawCount" : 0
+    };
+
+    let tutorialProgress = 0;
+    let matchHistory = [];
+    let updateUserReadOnly = {
         PlayFabId: currentPlayerId,
         Data: {
             "equipped": JSON.stringify(equipped),
@@ -760,14 +761,14 @@ handlers.FirstLogin = function () {
             "tutorialProgress": JSON.stringify(tutorialProgress),
             "starterBoxProgress": JSON.stringify(starterBoxProgress)
         }
-    }
-    var updateUserReadOnly2 = {
+    };
+    let updateUserReadOnly2 = {
         PlayFabId: currentPlayerId,
         Data: {
             "maxTrophy": JSON.stringify(maxTrophy),
             "lastRewardedProgressIndex": JSON.stringify(lastRewardedProgressIndex)
         }
-    }
+    };
     server.UpdatePlayerStatistics({
         "PlayFabId": currentPlayerId,
         "Statistics": [
@@ -776,7 +777,7 @@ handlers.FirstLogin = function () {
                 "Value": 0
             }
         ]
-    })
+    });
 
     server.UpdateUserReadOnlyData(updateUserReadOnly);
     server.UpdateUserReadOnlyData(updateUserReadOnly2);
@@ -1330,10 +1331,12 @@ handlers.UpgradeWeapon = function (args) {
 
 handlers.OnMatchStart = function (args) {
     /*
-    {"PlayerGameliftId":"asd",
-    "MatchId":"asd",
-    "MatchType":"asd",
-    "Adress":"asd"}
+    {
+        "PlayerGameliftId":"asd",
+        "MatchId":"asd",
+        "MatchType":"DeathMatch",
+        "Adress":"asd"
+    }
     */
     args.PlayerGameliftId = !args.PlayerGameliftId ? {} : args.PlayerGameliftId;
     args.MatchId = !args.MatchId ? {} : args.MatchId;
@@ -1357,14 +1360,14 @@ handlers.OnMatchStart = function (args) {
 
 handlers.GetOngoingMatch = function () {
 
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
-    var reconnectData = {
+    let ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
+    return {
         "PlayerGameliftId": ongoingMatch[0],
         "Adress": ongoingMatch[3]
-    }
+    };
     /*   var matchDuration = getMatchDuration(ongoingMatch[2])
        var matchEndTime = ongoingMatch[4] + matchDuration
        if (matchEndTime > ((new Date().getTime() / 1000) + 15)) {
@@ -1379,7 +1382,6 @@ handlers.GetOngoingMatch = function () {
                "Adress": "0"
            }
        }*/
-    return reconnectData
 }
 
 handlers.GetCurrentEquipment = function () {
