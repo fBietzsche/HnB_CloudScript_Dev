@@ -161,10 +161,12 @@ function winCondition(winArgs) {
     if (5 == matchHistory.length) {
         matchHistory.pop();
     }
-    let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
+    /*let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
         oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained]
+    */
     //TODO: change thisMatch to object from array.
-    /*
+
+
     let thisMatch = {
         "date" : new Date().toISOString(),
         "winnerPlayers" : winnerPlayers,
@@ -180,7 +182,7 @@ function winCondition(winArgs) {
         "trophyChange" : trophyChange,
         "batteryGained" : batteryGained
     };
-    */
+
     matchHistory.unshift(thisMatch);
     //ongoingMatch = ["0", "0", "0", "0", 0]
 
@@ -280,8 +282,25 @@ function loseCondition(loseArgs) {
         matchHistory.pop();
     }
     var isBoxGiven = 0;
-    var thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
+/*    var thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
         oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained]
+*/
+    let thisMatch = {
+        "date" : new Date().toISOString(),
+        "winnerPlayers" : winnerPlayers,
+        "loserPlayers" : loserPlayers,
+        "drawPlayers" : drawPlayers,
+        "oldBooster" : oldBooster,
+        "tradedBattery" : tradedBattery,
+        "isBoxGiven" : isBoxGiven,
+        "trophy" : trophy,
+        "newTrophy" : newTrophy,
+        "matchId" : ongoingMatch.matchId,
+        "accountExpGained" : accountExpGained,
+        "trophyChange" : trophyChange,
+        "batteryGained" : batteryGained
+    };
+
     matchHistory.unshift(thisMatch);
     //var ongoingMatch = ["0", "0", "0", "0", 0]
 
@@ -350,8 +369,24 @@ function drawCondition(drawArgs) {
         matchHistory.pop();
     }
     var isBoxGiven = 0;
-    var thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
+   /* var thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
         oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch[1], accountExpGained, trophyChange, batteryGained]
+    */
+    let thisMatch = {
+        "date" : new Date().toISOString(),
+        "winnerPlayers" : winnerPlayers,
+        "loserPlayers" : loserPlayers,
+        "drawPlayers" : drawPlayers,
+        "oldBooster" : oldBooster,
+        "tradedBattery" : tradedBattery,
+        "isBoxGiven" : isBoxGiven,
+        "trophy" : trophy,
+        "newTrophy" : newTrophy,
+        "matchId" : ongoingMatch.matchId,
+        "accountExpGained" : accountExpGained,
+        "trophyChange" : trophyChange,
+        "batteryGained" : batteryGained
+    };
     matchHistory.unshift(thisMatch);
     //var ongoingMatch = ["0", "0", "0", "0", 0]
 
