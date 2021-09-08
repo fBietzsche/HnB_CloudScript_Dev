@@ -843,7 +843,7 @@ handlers.FirstLogin = function () {
     let equipped = {
         "boombot" : configs[0].boombotName,
         "weapon" : configs[0].weapons[0].weaponId,
-        "boombotCostume" : configs[0].boombotCostume,
+        "costume" : configs[0].boombotCostume,
         "weaponCostume" : configs[0].weapons[0].weaponCostume
     };
 
