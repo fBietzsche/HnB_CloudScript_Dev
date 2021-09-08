@@ -1301,7 +1301,7 @@ handlers.GetUserGameParams = function () {
     var configs = JSON.parse(userData.Data.configs.Value)
     var itemLevel = JSON.parse(userData.Data.itemLevel.Value)
     var gameParams = {
-        "equipped": equipped,
+        "equipped": [equipped.boombot, equipped.boombotCostume, equipped.weapon, equipped.weaponCostume],
         "configs": configs,
         "itemLevel": itemLevel,
         "HealthPoints": HP,
