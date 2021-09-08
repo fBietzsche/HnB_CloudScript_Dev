@@ -741,6 +741,15 @@ handlers.SlotTester = function (args) {
     }
 }
 
+function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume, playerHasBoombot){
+    this.boombotId = boombotId;
+    this.boombotName = boombotName;
+    this.boombotCostume = boombotCostume;
+    this.weapon = weapon;
+    this.weaponCostume = weaponCostume;
+    this.playerHasBoombot = playerHasBoombot;
+}
+
 handlers.FirstLogin = function () {
     //TODO yeni exp sistemine göre güncellenecek
     /*{
@@ -766,26 +775,23 @@ handlers.FirstLogin = function () {
         0,
         0
     ];
-    let configsBase = [
+    /*let configsBase = [
         1,
         1,
         1,
         0
-    ];
+    ];*/
+
+
     let itemLevel = [];
     let configs = [];
+
     for (let k = 0; k < RobotCount; k++) {
-        if (k == 0) {
-            configs[0] = [
-                1,
-                1,
-                1,
-                1
-            ];
-        } else {
-            configs.push(configsBase);
-        }
+        configs.push(new Config(k, getBoombot(k), 1, 1, 1, false));
     }
+
+    configs[0].playerHasBoombot = true;
+
     for (let i = 0; i < WeaponCount; i++) {
         if (i == 0) {
             itemLevel[0] = [
@@ -815,6 +821,7 @@ handlers.FirstLogin = function () {
         "weapon" : 1,
         "weaponCostume" : 1
     };
+    
 
     /*let matchStats = [
         0, 0, 0
@@ -1128,13 +1135,13 @@ handlers.OpenBox = function (args) {
                 var isWeaponGranted = 1
                 var grantItemsIds = [weaponName]
                 //player got boombot?
-                if (configs[boombotId][3] == 0) {
-                    configs[boombotId][3] = 1
+                if (configs[boombotId].playerHasBoombot === false) {
+                    configs[boombotId].playerHasBoombot = true
                     grantItemsIds.push(boombotName)
                     var isBoombotGranted = 1
-                    configs[boombotId][0] = 1
-                    configs[boombotId][1] = weaponId % 4 + 1
-                    configs[boombotId][2] = 1
+                    configs[boombotId].boombotCostume = 1
+                    configs[boombotId].weapon = weaponId % 4 + 1
+                    configs[boombotId].weaponCostume = 1
                     log.debug("weaponid " + configs[boombotId][1])
                 }
                 itemLevel[weaponId][0] = 1
@@ -1209,14 +1216,14 @@ handlers.EquipItem = function (args) {
     var equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     var configs = JSON.parse(currentPlayerData.Data.configs.Value);
     var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    if (configs[boomBotId][3] == 1 && itemLevel[weaponId][0] >= 1) {
+    if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId][0] >= 1) {
         equipped.boombot = args.boombot;
         equipped.boombotCostume = args.cos;
         equipped.weaponCostume = args.wpn;
         equipped.weaponCostume = args.wpnCos;
-        configs[boomBotId][0] = args.cos;
-        configs[boomBotId][1] = args.wpn;
-        configs[boomBotId][2] = args.wpnCos;
+        configs[boomBotId].boombotCostume = args.cos;
+        configs[boomBotId].weapon = args.wpn;
+        configs[boomBotId].weaponCostume = args.wpnCos;
     }
     var updateEquippedItems = {
         PlayFabId: currentPlayerId,
