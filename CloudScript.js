@@ -1130,17 +1130,6 @@ handlers.SpendRubySlot = function (args) {
 
 }
 
-handlers.test = function (){
-    //TODO: SİL
-    let data = {
-        PlayFabId : currentPlayerId,
-        Data :{
-            "deneme\.isReady" : false
-        }
-    };
-    server.UpdateUserReadOnlyData(data);
-}
-
 handlers.OpenBox = function (args) {
     //{Box : boxId}
     //when box ready, click to open function
