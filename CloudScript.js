@@ -238,7 +238,7 @@ function loseCondition(loseArgs) {
         trophyChange = (-1)*(1 + Math.floor(trophy / 100))
     }
     matchStats.loseCount += 1;
-    accountExp[1] = accountExp[1] + accountExpGained;
+    accountExp[1] += accountExpGained;
 
     //TODO: potential bug? trophy will never be less than trophyChange
 
@@ -515,7 +515,7 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
-handlers.grantMultipleItems = function(args){
+handlers.GrantMultipleItems = function(args){
     let itemIds = [];
     let itemId = args.itemId;
     let amount = args.amount;
