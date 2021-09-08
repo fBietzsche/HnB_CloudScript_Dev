@@ -557,7 +557,7 @@ function Config(boombotId, boombotName, boombotCostume, playerHasBoombot){
     this.weapons = [];
 
     for(let i = 0; i < WeaponCount / RobotCount; i++){
-        this.weapons.push(new Weapon(i, getWeapon(i), 1, false));
+        this.weapons.push(new Weapon(i, getWeapon(boombotId * (WeaponCount / RobotCount) + i), 1, false));
     }
 
     this.playerHasBoombot = playerHasBoombot;
