@@ -1253,7 +1253,7 @@ handlers.EquipItem = function (args) {
         equipped.weaponCostume = args.wpn;
         equipped.weaponCostume = args.wpnCos;*/
         configs[boomBotId].boombotCostume = args.cos;
-        configs[boomBotId][args.wpn].weaponCostume = args.wpnCos;
+        configs[boomBotId].weapons[args.wpn].weaponCostume = args.wpnCos;
         equipped = {
             "boombot" : configs[boomBotId].boombotName,
             "weapon" : configs[boomBotId][args.wpn],
