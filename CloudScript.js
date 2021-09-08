@@ -1134,7 +1134,9 @@ handlers.test = function (){
     //TODO: SİL
     let data = {
         PlayFabId : currentPlayerId,
-        "itemLevel[0][2]" : 15
+        Data :{
+            "itemLevel[0][2]" : 15
+        }
     };
     server.UpdateUserReadOnlyData(data);
 }
