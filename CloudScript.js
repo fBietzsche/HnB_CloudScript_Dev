@@ -1251,51 +1251,6 @@ handlers.EquipItem = function (args) {
     server.UpdateUserReadOnlyData(updateEquippedItems);
 }
 
-/*
-handlers.GetUserGameplayConfig = function (args) {
-    // Gameplay parameters sender function
-    args.PlayerId = !args.PlayerId ? {} : args.PlayerId;
-
-    var PlayerId = args.PlayerId;
-
-    var accInfo = server.GetUserAccountInfo({
-        PlayFabId: PlayerId
-    });
-    var titleData = server.GetTitleData({
-        PlayFabId: PlayerId,
-        "Keys": ["levelData", "robotValues", "weaponValues"]
-    });
-    var userData = server.GetUserReadOnlyData({
-        PlayFabId: PlayerId,
-        "Keys": ["equipped", "itemLevel"]
-    });
-
-    var titleInfo = accInfo.UserInfo.TitleInfo;
-    var itemLevel = JSON.parse(userData.Data.itemLevel.Value);
-    var weaponData = JSON.parse(titleData.Data.weaponValues);
-    var currentEquipment = JSON.parse(userData.Data.equipped.Value);
-    var boomBotId = getBoombot(currentEquipment[0])
-    var weaponId = ((4 * boomBotId) + currentEquipment[2] - 1)
-    var gameplayParams = {
-        "DisplayName": titleInfo.DisplayName,
-        "RobotId": currentEquipment[0],
-        "RobotCostumeId": currentEquipment[1] - 1,
-        "WeaponId": currentEquipment[2] - 1,
-        "WeaponCostumeId": currentEquipment[3] - 1,
-        "Damage": weaponData[weaponId][0] + (weaponData[weaponId][0] * (itemLevel[weaponId][0] - 1) * 0.05),
-        "EnergyCost": weaponData[weaponId][1],
-        "EnergyChargeRate": weaponData[weaponId][2],
-        "UltDamageScale": weaponData[weaponId][3],
-        "UltCharge": weaponData[weaponId][4],
-        "MoveSpeedScale": weaponData[weaponId][5],
-        "AltDamage": weaponData[weaponId][6] * (weaponData[weaponId][0] + (weaponData[weaponId][0] * (itemLevel[weaponId][0] - 1) * 0.05)),
-        "HealthPoints": weaponData[weaponId][7] + (weaponData[weaponId][7] * (itemLevel[weaponId][0] - 1) * 0.05),
-        "Cooldown": weaponData[weaponId][8]
-    }
-    return gameplayParams;
-}
-*/
-
 handlers.GetUserGameParams = function () {
     let userData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
@@ -1332,53 +1287,7 @@ handlers.GetUserGameParams = function () {
         "nextLevel": nextLevel
     };
 }
-/*
-handlers.CheckUpgrade = function () {
-    //TODO Max level durumu eklenecek
-    var currentPlayerData = server.GetUserReadOnlyData({
-        PlayFabId: currentPlayerId
-    });
-    var titleData = server.GetTitleData({
-        PlayFabId: currentPlayerId,
-        "Keys": "levelData"
-    });
 
-    var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    var levelData = JSON.parse(titleData.Data.levelData);
-    var levelRamp = levelData.levelRamp;
-    var levelCoin = levelData.levelCoin;
-    var requiredExp = [];
-    var requiredCoin = [];
-    var currentExp = [];
-    var checkResult = [];
-
-    for (i = 0; i < WeaponCount; i++) {
-        requiredExp.push(0)
-        requiredCoin.push(0)
-        currentExp.push(0)
-        checkResult.push(0)
-        if (itemLevel[i][0] == 10) {
-            checkResult[i] = "max"
-            currentExp[i] = "max"
-            requiredExp[i] = "max"
-            requiredCoin[i] = "max"
-        } else {
-            currentExp[i] = itemLevel[i][1];
-            requiredExp[i] = levelRamp[itemLevel[i][0] - 1]
-            requiredCoin[i] = levelCoin[itemLevel[i][0] - 1]
-            if (requiredExp[i] <= currentExp[i]) {
-                checkResult[i] = 1
-            }
-        }
-    }
-    return {
-        "checkResult": checkResult,
-        "currentExp": currentExp,
-        "requiredExp": requiredExp,
-        "requiredCoin": requiredCoin
-    }
-}
-*/
 handlers.UpgradeWeapon = function (args) {
     //usable when an boombot can be upgraded
     args.whichWeapon = !args.whichWeapon ? {} : args.whichWeapon;
