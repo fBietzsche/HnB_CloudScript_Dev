@@ -796,18 +796,18 @@ handlers.FirstLogin = function () {
     ];*/
 
 
-    let itemLevel = {};
-    let configs = {};
+    let itemLevel = [];
+    let configs = [];
 
     for (let k = 0; k < RobotCount; k++) {
-        configs[getBoombot(k)] = new Config(k, getBoombot(k), 1, 1, 1);
+        configs.push(new Config(k, getBoombot(k), 1, 1, 1));
     }
 
     for (let i = 0; i < WeaponCount; i++) {
-        itemLevel[getWeapon(i)] = new Weapon(i, getWeapon(i), 0, 0, 0);
+        itemLevel.push(new Weapon(i, getWeapon(i), 0, 0, 0));
     }
 
-    itemLevel[getWeapon(0)].weaponLevel = 1;
+    itemLevel[0].weaponLevel = 1;
 
     //log.debug("configs b = " + configs)
     //itemLevel[0][0] = 1;
@@ -829,10 +829,10 @@ handlers.FirstLogin = function () {
     };*/
 
     let equipped = {
-        "boombot" : configs[getBoombot(0)].boombotName,
-        "weapon" : itemLevel[getWeapon(0)].weaponId,
-        "costume" : configs[getBoombot(0)].boombotCostume,
-        "weaponCostume" : configs[getBoombot(0)].weaponCostume
+        "boombot" : configs[0].boombotName,
+        "weapon" : itemLevel[0].weaponId,
+        "costume" : configs[0].boombotCostume,
+        "weaponCostume" : configs[0].weaponCostume
     };
 
 
