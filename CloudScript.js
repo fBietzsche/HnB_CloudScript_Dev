@@ -550,24 +550,19 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
-function Config(boombotId, boombotName, boombotCostume, playerHasBoombot){
+function Config(boombotId, boombotName, boombotCostume, weaponCostume){
     this.boombotId = boombotId;
     this.boombotName = boombotName;
     this.boombotCostume = boombotCostume;
-    this.weapons = [];
-
-    for(let i = 0; i < WeaponCount / RobotCount; i++){
-        this.weapons.push(new Weapon(i, getWeapon(boombotId * (WeaponCount / RobotCount) + i), 0, false));
-    }
-
-    this.playerHasBoombot = playerHasBoombot;
+    this.weaponCostume = weaponCostume;
 }
 
-function Weapon(weaponId, weaponName, weaponCostume, playerHasWeapon){
+function Weapon(weaponId, weaponName, weaponLevel, weaponExp, weaponTrophy){
     this.weaponId = weaponId;
     this.weaponName = weaponName;
-    this.weaponCostume = weaponCostume;
-    this.playerHasWeapon = playerHasWeapon;
+    this.weaponLevel = weaponLevel;
+    this.weaponExp = weaponExp;
+    this.weaponTrophy = weaponTrophy;
 }
 
 function getTimeInSeconds(){
@@ -800,27 +795,19 @@ handlers.FirstLogin = function () {
     ];*/
 
 
-    let itemLevel = [];
-    let configs = [];
+    let itemLevel = {};
+    let configs = {};
 
     for (let k = 0; k < RobotCount; k++) {
-        configs.push(new Config(k, getBoombot(k), 0, false));
+        configs[getBoombot(k)] = new Config(k, getBoombot(k), 1, 1);
     }
-
-    configs[0].playerHasBoombot = true;
-    configs[0].weapons[0].playerHasWeapon = true;
 
     for (let i = 0; i < WeaponCount; i++) {
-        if (i == 0) {
-            itemLevel[0] = [
-                1,
-                0,
-                0
-            ];
-        } else {
-            itemLevel.push(itemLevelBase);
-        }
+        itemLevel[getWeapon(i)] = new Weapon(i, getWeapon(i), 0, 0, 0);
     }
+
+    itemLevel[getWeapon(0)].weaponLevel = 1;
+
     //log.debug("configs b = " + configs)
     //itemLevel[0][0] = 1;
     //configs[0][3] = 1;
