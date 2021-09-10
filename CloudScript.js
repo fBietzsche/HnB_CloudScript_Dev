@@ -829,9 +829,9 @@ handlers.FirstLogin = function () {
 
     let equipped = {
         "boombot" : configs[getBoombot(0)].boombotName,
-        "weapon" : itemLevel[0].weaponId,
-        "costume" : configs[0].boombotCostume,
-        "weaponCostume" : configs[0].weaponCostume
+        "weapon" : itemLevel[getWeapon(0)].weaponId,
+        "costume" : configs[getBoombot(0)].boombotCostume,
+        "weaponCostume" : configs[getBoombot(0)].weaponCostume
     };
 
 
