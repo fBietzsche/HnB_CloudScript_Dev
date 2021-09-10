@@ -94,7 +94,7 @@ function winCondition(winArgs) {
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
 
-    let equippedBoomBotId = getBoombot(equipped.boombot);
+    let equippedBoomBotId = equipped.boombotId;
     let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1;
 
 
@@ -116,7 +116,7 @@ function winCondition(winArgs) {
         maxTrophy = newTrophy
     }
 
-    itemLevel[equippedWeaponId][2] += trophyChange;
+    itemLevel[equippedWeaponId].weaponTrophy += trophyChange;
 
     //give booster if available
     let currentPlayerInventory = server.GetUserInventory({
@@ -229,7 +229,7 @@ function loseCondition(loseArgs) {
 
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    let equippedBoomBotId = getBoombot(equipped.boombotId);
+    let equippedBoomBotId = equipped.boombotId;
     let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1
 
 
@@ -250,13 +250,13 @@ function loseCondition(loseArgs) {
         var newTrophy = trophy + trophyChange;
     }
 
-    if(itemLevel[equippedWeaponId][2] + trophyChange <= 0)
+    if(itemLevel[equippedWeaponId].weaponTrophy + trophyChange <= 0)
     {
-        itemLevel[equippedWeaponId][2] = 0;
+        itemLevel[equippedWeaponId].weaponTrophy = 0;
     }
     else
     {
-        itemLevel[equippedWeaponId][2] += trophyChange;
+        itemLevel[equippedWeaponId].weaponTrophy += trophyChange;
     }
 
 
@@ -550,20 +550,22 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
-function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume){
+function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume, playerHasBoombot){
     this.boombotId = boombotId;
     this.boombotName = boombotName;
     this.boombotCostume = boombotCostume;
     this.weapon = weapon;
     this.weaponCostume = weaponCostume;
+    this.playerHasBoombot = playerHasBoombot;
 }
 
-function Weapon(weaponId, weaponName, weaponLevel, weaponExp, weaponTrophy){
+function Weapon(weaponId, weaponName, weaponLevel, weaponExp, weaponTrophy, playerHasWeapon){
     this.weaponId = weaponId;
     this.weaponName = weaponName;
     this.weaponLevel = weaponLevel;
     this.weaponExp = weaponExp;
     this.weaponTrophy = weaponTrophy;
+    this.playerHasWeapon = playerHasWeapon;
 }
 
 function getTimeInSeconds(){
@@ -800,14 +802,16 @@ handlers.FirstLogin = function () {
     let configs = [];
 
     for (let k = 0; k < RobotCount; k++) {
-        configs.push(new Config(k, getBoombot(k), 1, 1, 1));
+        configs.push(new Config(k, getBoombot(k), 1, 1, 1, false));
     }
 
     for (let i = 0; i < WeaponCount; i++) {
-        itemLevel.push(new Weapon(i, getWeapon(i), 0, 0, 0));
+        itemLevel.push(new Weapon(i, getWeapon(i), 0, 0, 0, false));
     }
 
+    configs[0].playerHasBoombot = true;
     itemLevel[0].weaponLevel = 1;
+    itemLevel[0].playerHasWeapon = true;
 
     //log.debug("configs b = " + configs)
     //itemLevel[0][0] = 1;
@@ -829,7 +833,8 @@ handlers.FirstLogin = function () {
     };*/
 
     let equipped = {
-        "boombot" : configs[0].boombotName,
+        "boombotId" : configs[0].boombotId,
+        "boombotName" : configs[0].boombotName,
         "weapon" : itemLevel[0].weaponId,
         "costume" : configs[0].boombotCostume,
         "weaponCostume" : configs[0].weaponCostume
@@ -1150,7 +1155,7 @@ handlers.OpenBox = function (args) {
             var boombotId = Math.floor(weaponId / 4)
             var boombotName = getBoombot(boombotId)
             // player got weapon?
-            if (itemLevel[weaponId][0] == 0) {
+            if (itemLevel[weaponId].weaponLevel == 0) {
                 var isWeaponGranted = 1
                 var grantItemsIds = [weaponName]
                 //player got boombot?
@@ -1163,7 +1168,7 @@ handlers.OpenBox = function (args) {
                     configs[boombotId].weaponCostume = 1
                     log.debug("weaponid " + configs[boombotId][1])
                 }
-                itemLevel[weaponId][0] = 1
+                itemLevel[weaponId].weaponLevel = 1
                 var updateUserReadOnly = {
                     PlayFabId: currentPlayerId,
                     Data: {
@@ -1188,7 +1193,7 @@ handlers.OpenBox = function (args) {
                 else {
                     var expAmount = Math.floor(Math.random() * (20 - 8 + 1)) + 8;
                 }
-                itemLevel[weaponId][1] += expAmount;
+                itemLevel[weaponId].weaponExp += expAmount;
                 var updateUserReadOnly = {
                     PlayFabId: currentPlayerId,
                     Data: {
@@ -1196,7 +1201,7 @@ handlers.OpenBox = function (args) {
                     }
                 }
                 server.UpdateUserReadOnlyData(updateUserReadOnly);
-                var currentExp = itemLevel[weaponId][1]
+                var currentExp = itemLevel[weaponId].weaponExp
             }
         }
     }
@@ -1236,7 +1241,7 @@ handlers.EquipItem = function (args) {
     let equipped/* = JSON.parse(currentPlayerData.Data.equipped.Value)*/;
     let configs = JSON.parse(currentPlayerData.Data.configs.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId][0] >= 1) {
+    if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId].weaponLevel >= 1) {
         /*equipped.boombot = args.boombot;
         equipped.boombotCostume = args.cos;
         equipped.weaponCostume = args.wpn;
@@ -1244,7 +1249,8 @@ handlers.EquipItem = function (args) {
         configs[boomBotId].boombotCostume = args.cos;
         configs[boomBotId].weapons[args.wpn].weaponCostume = args.wpnCos;
         equipped = {
-            "boombot" : configs[boomBotId].boombotName,
+            "boombotId" : configs[boomBotId].boombotId,
+            "boombotName" : configs[boomBotId].boombotName,
             "weapon" : configs[boomBotId].weapons[args.wpn].weaponId,
             "costume" : configs[boomBotId].boombotCostume,
             "weaponCostume" : configs[boomBotId].weapons[args.wpn].weaponCostume
@@ -1281,10 +1287,10 @@ handlers.GetUserGameParams = function () {
     for (i = 0; i < WeaponCount; i++) {
         nextLevel.push([]);
         DMG.push([]);
-        HP[i] = weaponData[i][7] + (weaponData[i][7] * (itemLevel[i][0] - 1) * 0.05);
-        nextLevel[i][0] = nextExp[itemLevel[i][0]];
-        nextLevel[i][1] = nextCoin[itemLevel[i][0]];
-        DMG[i] = Math.round(weaponData[i][0] + (weaponData[i][0] * (itemLevel[i][0] - 1) * 0.05));
+        HP[i] = weaponData[i][7] + (weaponData[i][7] * (itemLevel[i].weaponLevel - 1) * 0.05);
+        nextLevel[i][0] = nextExp[itemLevel[i].weaponLevel];
+        nextLevel[i][1] = nextCoin[itemLevel[i].weaponLevel];
+        DMG[i] = Math.round(weaponData[i][0] + (weaponData[i][0] * (itemLevel[i].weaponLevel - 1) * 0.05));
     }
     let equipped = JSON.parse(userData.Data.equipped.Value);
     let configs = JSON.parse(userData.Data.configs.Value);
@@ -1320,17 +1326,17 @@ handlers.UpgradeWeapon = function (args) {
     var levelData = JSON.parse(titleData.Data.levelData);
     var levelRamp = levelData.levelRamp;
     var levelCoin = levelData.levelCoin;
-    var currentExp = itemLevel[whichWeapon][1];
-    var requiredExp = levelRamp[itemLevel[whichWeapon][0] - 1]
-    var requiredCoin = levelCoin[itemLevel[whichWeapon][0] - 1]
+    var currentExp = itemLevel[whichWeapon].weaponExp;
+    var requiredExp = levelRamp[itemLevel[whichWeapon].weaponLevel - 1]
+    var requiredCoin = levelCoin[itemLevel[whichWeapon].weaponLevel - 1]
     var isUpgraded = 0
 
     //if OK level up
-    if (itemLevel[whichWeapon][0] <= 9) {
+    if (itemLevel[whichWeapon].weaponLevel <= 9) {
         if ((playerCoin >= requiredCoin) && (currentExp >= requiredExp)) {
-            itemLevel[whichWeapon][1] -= requiredExp
-            itemLevel[whichWeapon][0] += 1;
-            currentExp = itemLevel[whichWeapon][1]
+            itemLevel[whichWeapon].weaponExp -= requiredExp
+            itemLevel[whichWeapon].weaponLevel += 1;
+            currentExp = itemLevel[whichWeapon].weaponExp
             var upgradeItem = {
                 PlayFabId: currentPlayerId,
                 Data: { "itemLevel": JSON.stringify(itemLevel) }
@@ -1429,7 +1435,7 @@ handlers.GetCurrentEquipment = function () {
         "boombotCostume": equipped.boombotCostume,
         "weapon": equipped.weapon,
         "weaponCostume": equipped.weaponCostume,
-        "itemLevel": itemLevel[equipped.weapon][0]
+        "itemLevel": itemLevel[equipped.weapon].weaponLevel
     }
 }
 
@@ -1508,7 +1514,7 @@ handlers.GetWeaponsData = function ()
 
     for(let i = 0; i < WeaponCount; i++)
     {
-        if(itemLevels[i][0] >= WeaponMaxLevel)
+        if(itemLevels[i].weaponLevel >= WeaponMaxLevel)
         {
             canUpgrade.push(false);
             currentLevels.push(WeaponMaxLevel);
@@ -1518,13 +1524,13 @@ handlers.GetWeaponsData = function ()
         }
         else
         {
-            currentLevels.push(itemLevels[i][0]);
-            currentEXPs.push(itemLevels[i][1]);
+            currentLevels.push(itemLevels[i].weaponLevel);
+            currentEXPs.push(itemLevels[i].weaponExp);
 
-            if(itemLevels[i][0] !== 0)
+            if(itemLevels[i].weaponLevel !== 0)
             {
-                requiredEXPToUpgrade.push(parseInt(levelRamps[itemLevels[i][0] - 1]));
-                requiredCoinToUpgrade.push(parseInt(levelCoins[itemLevels[i][0] - 1]));
+                requiredEXPToUpgrade.push(parseInt(levelRamps[itemLevels[i].weaponLevel - 1]));
+                requiredCoinToUpgrade.push(parseInt(levelCoins[itemLevels[i].weaponLevel - 1]));
                 canUpgrade.push(requiredEXPToUpgrade[i] <= currentEXPs[i]);
             }
             else
@@ -1534,7 +1540,7 @@ handlers.GetWeaponsData = function ()
                 canUpgrade.push(false);
             }
         }
-        currentTrophies.push(itemLevels[i][2] ? itemLevels[i][2] : 0);
+        currentTrophies.push(itemLevels[i].weaponTrophy ? itemLevels[i].weaponTrophy : 0);
     }
 
     return {
