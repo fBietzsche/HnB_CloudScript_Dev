@@ -784,11 +784,11 @@ handlers.FirstLogin = function () {
     for (let j = 0; j < SlotCount; j++) {
         slots.push(new Slot(false, true, 0, 0));
     }
-    let itemLevelBase = [
+    /*let itemLevelBase = [
         0,
         0,
         0
-    ];
+    ];*/
     /*let configsBase = [
         1,
         1,
@@ -832,7 +832,6 @@ handlers.FirstLogin = function () {
 
     let equipped = {
         "boombotId" : configs[0].boombotId,
-        "boombotName" : configs[0].boombotName,
         "weapon" : itemLevel[0].weaponId,
         "costume" : configs[0].boombotCostume,
         "weaponCostume" : configs[0].weaponCostume
@@ -1248,7 +1247,6 @@ handlers.EquipItem = function (args) {
         configs[boomBotId].weapons[args.wpn].weaponCostume = args.wpnCos;
         equipped = {
             "boombotId" : configs[boomBotId].boombotId,
-            "boombotName" : configs[boomBotId].boombotName,
             "weapon" : configs[boomBotId].weapons[args.wpn].weaponId,
             "costume" : configs[boomBotId].boombotCostume,
             "weaponCostume" : configs[boomBotId].weapons[args.wpn].weaponCostume
