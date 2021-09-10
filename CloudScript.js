@@ -559,13 +559,12 @@ function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume, p
     this.playerHasBoombot = playerHasBoombot;
 }
 
-function Weapon(weaponId, weaponName, weaponLevel, weaponExp, weaponTrophy, playerHasWeapon){
+function Weapon(weaponId, weaponName, weaponLevel, weaponExp, weaponTrophy){
     this.weaponId = weaponId;
     this.weaponName = weaponName;
     this.weaponLevel = weaponLevel;
     this.weaponExp = weaponExp;
     this.weaponTrophy = weaponTrophy;
-    this.playerHasWeapon = playerHasWeapon;
 }
 
 function getTimeInSeconds(){
@@ -811,7 +810,6 @@ handlers.FirstLogin = function () {
 
     configs[0].playerHasBoombot = true;
     itemLevel[0].weaponLevel = 1;
-    itemLevel[0].playerHasWeapon = true;
 
     //log.debug("configs b = " + configs)
     //itemLevel[0][0] = 1;
