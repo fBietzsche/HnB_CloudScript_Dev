@@ -550,10 +550,11 @@ function accountLevelUpCheck() {
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
-function Config(boombotId, boombotName, boombotCostume, weaponCostume){
+function Config(boombotId, boombotName, boombotCostume, weapon, weaponCostume){
     this.boombotId = boombotId;
     this.boombotName = boombotName;
     this.boombotCostume = boombotCostume;
+    this.weapon = weapon;
     this.weaponCostume = weaponCostume;
 }
 
@@ -799,7 +800,7 @@ handlers.FirstLogin = function () {
     let configs = {};
 
     for (let k = 0; k < RobotCount; k++) {
-        configs[getBoombot(k)] = new Config(k, getBoombot(k), 1, 1);
+        configs[getBoombot(k)] = new Config(k, getBoombot(k), 1, 1, 1);
     }
 
     for (let i = 0; i < WeaponCount; i++) {
