@@ -522,7 +522,7 @@ handlers.GrantMultipleItems = function(args){
 
     let itemToGrant = {
         "PlayFabId": currentPlayerId,
-        "CatalogVersion": "Items",
+        "CatalogVersion": "Catalog_v1.0",
         "ItemIds": itemIds
     };
     server.GrantItemsToUser(itemToGrant);
