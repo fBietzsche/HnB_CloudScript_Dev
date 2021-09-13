@@ -512,6 +512,13 @@ function getTimeInSeconds(){
 }
 
 handlers.GrantMultipleItems = function(args){
+    /* args format
+    {
+        "itemId" : "msw_1_experience",
+        "amount" : 12
+    }
+    */
+
     let itemIds = [];
     let itemId = args.itemId;
     let amount = args.amount;
@@ -628,28 +635,28 @@ handlers.Debug = function () {
 
 handlers.AddNewRobot = function () {
     //TODO Yeni exp sistemine göre güncellenecek
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var itemLevel = []
-    var configs = []
-    var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    var configs = JSON.parse(currentPlayerData.Data.configs.Value)
-    var itemLevelBase = [
+
+    let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
+    let configs = JSON.parse(currentPlayerData.Data.configs.Value)
+    let itemLevelBase = [
+        1,
+        0,
+        0
+    ]
+    let configsBase = [
+        1,
+        1,
         1,
         0
     ]
-    var configsBase = [
-        1,
-        1,
-        1,
-        0
-    ]
-    for (var i = 0; i < 4; i++) {
+    for (let i = 0; i < 4; i++) {
         itemLevel.push(itemLevelBase)
     }
     configs.push(configsBase)
-    var updateUserReadOnly = {
+    let updateUserReadOnly = {
         PlayFabId: currentPlayerId,
         Data: {
             "configs": JSON.stringify(configs),
@@ -666,17 +673,17 @@ handlers.SlotTester = function (args) {
     }*/
     args.slot = !args.slot ? {} : args.slot;
     args.timer = !args.timer ? {} : args.timer;
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
 
-    var starterBoxProgress = JSON.parse(currentPlayerData.Data.starterBoxProgress.Value);
-    var currentTutorialProgress = JSON.parse(currentPlayerData.Data.tutorialProgress.Value);
+    let starterBoxProgress = JSON.parse(currentPlayerData.Data.starterBoxProgress.Value);
+    let currentTutorialProgress = JSON.parse(currentPlayerData.Data.tutorialProgress.Value);
     if (currentTutorialProgress == 2 || currentTutorialProgress == 6) {
         {
-            var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-            var whichSlot = args.slot;
-            var timer = args.timer;
+            let slots = JSON.parse(currentPlayerData.Data.slots.Value);
+            let whichSlot = args.slot;
+            let timer = args.timer;
 
             slots[whichSlot].isReady = false;
             slots[whichSlot].isAvailable = false;
@@ -689,7 +696,7 @@ handlers.SlotTester = function (args) {
                 (getTimeInSeconds) + timer
             ]*/
             starterBoxProgress = currentTutorialProgress == 2 ? 1 : 2;
-            var updateUserReadOnly = {
+            let updateUserReadOnly = {
                 PlayFabId: currentPlayerId,
                 Data: {
                     "slots": JSON.stringify(slots),
@@ -954,9 +961,9 @@ handlers.EndMatchUpdate = function (args) {
     args.loserPlayers = !args.loserPlayers ? {} : args.loserPlayers;
     args.drawPlayers = !args.drawPlayers ? {} : args.drawPlayers;
 
-    var winnerPlayers = args.winnerPlayers;
-    var loserPlayers = args.loserPlayers;
-    var drawPlayers = args.drawPlayers;
+    let winnerPlayers = args.winnerPlayers;
+    let loserPlayers = args.loserPlayers;
+    let drawPlayers = args.drawPlayers;
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
         let winArgs = winnerPlayers[i];
@@ -978,77 +985,77 @@ handlers.EndMatchUpdate = function (args) {
 
 handlers.GetMatchResult = function () {
 
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
-    var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var accountLevelUpCheckResult = accountLevelUpCheck()
-    var availableSlotCount = 0
+    let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
+    let slots = JSON.parse(currentPlayerData.Data.slots.Value);
+    let accountLevelUpCheckResult = accountLevelUpCheck();
+    let availableSlotCount = 0;
 
     for (i = 0; i < 3; i++) {
         if (slots[i].isAvailable === true) {
-            availableSlotCount += 1
+            availableSlotCount += 1;
         }
     }
     return {
         "lastMatchResults": [[new Date().toISOString()], matchHistory[0], accountLevelUpCheckResult, availableSlotCount]
-    }
+    };
 }
 
 handlers.SpendBoosterSlot = function (args) {
     args.Slot = !args.Slot ? {} : args.Slot;
-    var whichSlot = args.Slot;
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let whichSlot = args.Slot;
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var currentPlayerInventory = server.GetUserInventory({
+    let currentPlayerInventory = server.GetUserInventory({
         PlayFabId: currentPlayerId
     });
-    var isUsed = 0;
-    var playerBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB);
-    var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var reqBooster = Math.ceil((slots[whichSlot][3] - getTimeInSeconds()) / 60);
-    if (playerBooster >= reqBooster && slots[whichSlot][1] == 0 && reqBooster >= 1) {
-        slots[whichSlot][3] = getTimeInSeconds();
-        var subBooster = {
+    let isUsed = 0;
+    let playerBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB);
+    let slots = JSON.parse(currentPlayerData.Data.slots.Value);
+    let reqBooster = Math.ceil((slots[whichSlot].endTime - getTimeInSeconds()) / 60);
+    if (playerBooster >= reqBooster && slots[whichSlot].isAvailable === false && reqBooster >= 1) {
+        slots[whichSlot].endTime = getTimeInSeconds();
+        let subBooster = {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "TB",
             Amount: reqBooster
         }
         server.SubtractUserVirtualCurrency(subBooster);
-        var updateSlotTimer = {
+        let updateSlotTimer = {
             PlayFabId: currentPlayerId,
             Data: { "slots": JSON.stringify(slots) }
         }
         server.UpdateUserReadOnlyData(updateSlotTimer);
-        isUsed = 1
+        isUsed = 1;
     }
-    return { "isUsed": isUsed }
+    return { "isUsed": isUsed };
 }
 
 handlers.SpendRubySlot = function (args) {
     args.Slot = !args.Slot ? {} : args.Slot;
-    var whichSlot = args.Slot;
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let whichSlot = args.Slot;
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var currentPlayerInventory = server.GetUserInventory({
+    let currentPlayerInventory = server.GetUserInventory({
         PlayFabId: currentPlayerId
     });
-    var isUsed = 0;
-    var playerRuby = JSON.parse(currentPlayerInventory.VirtualCurrency.RB);
-    var slots = JSON.parse(currentPlayerData.Data.slots.Value);
-    var reqRuby = Math.ceil((slots[whichSlot].endTime - getTimeInSeconds()) / 60);
+    let isUsed = 0;
+    let playerRuby = JSON.parse(currentPlayerInventory.VirtualCurrency.RB);
+    let slots = JSON.parse(currentPlayerData.Data.slots.Value);
+    let reqRuby = Math.ceil((slots[whichSlot].endTime - getTimeInSeconds()) / 60);
     if (playerRuby >= reqRuby && slots[whichSlot].isAvailable === false && reqRuby >= 1) {
         slots[whichSlot].endTime = getTimeInSeconds();
-        var subBooster = {
+        let subBooster = {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "RB",
             Amount: reqRuby
         }
         server.SubtractUserVirtualCurrency(subBooster);
-        var updateSlotTimer = {
+        let updateSlotTimer = {
             PlayFabId: currentPlayerId,
             Data: { "slots": JSON.stringify(slots) }
         }
@@ -1063,64 +1070,64 @@ handlers.OpenBox = function (args) {
     //{Box : boxId}
     //when box ready, click to open function
     //get player info
-    var boxType = args.Box;
-    var openBox = {
+    let boxType = args.Box;
+    let openBox = {
         PlayFabId: currentPlayerId,
         ContainerItemId: boxType
     }
-    var result = server.UnlockContainerItem(openBox);
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let result = server.UnlockContainerItem(openBox);
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var configs = JSON.parse(currentPlayerData.Data.configs.Value);
-    var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    var grantedItemIds = []
-    var grantedCoin = 0
-    var isWeaponGranted = 0
-    var isBoombotGranted = 0
+    let configs = JSON.parse(currentPlayerData.Data.configs.Value);
+    let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
+    let grantedItemIds = [];
+    let grantedCoin = 0;
+    let isWeaponGranted = 0;
+    let isBoombotGranted = 0;
     for (i = 0; i < result.GrantedItems.length; i++) {
-        grantedItemIds.push(0)
-        grantedItemIds[i] = result.GrantedItems[i].ItemId
-        var itemClass = result.GrantedItems[i].ItemClass
+        grantedItemIds.push(0);
+        grantedItemIds[i] = result.GrantedItems[i].ItemId;
+        let itemClass = result.GrantedItems[i].ItemClass;
         if (itemClass == "coinPack") {
-            grantedCoin = grantedItemIds[i]
-            grantedCoin = grantedCoin.slice(4, 20)
+            grantedCoin = grantedItemIds[i];
+            grantedCoin = grantedCoin.slice(4, 20);
         } else if (itemClass == "exp") {
-            var weaponName = grantedItemIds[i].slice(0, -4)
-            var weaponId = getWeapon(weaponName)
-            var boombotId = Math.floor(weaponId / 4)
-            var boombotName = getBoombot(boombotId)
+            let weaponName = grantedItemIds[i].slice(0, -4);
+            let weaponId = getWeapon(weaponName);
+            let boombotId = Math.floor(weaponId / 4);
+            let boombotName = getBoombot(boombotId);
             // player got weapon?
             if (itemLevel[weaponId].weaponLevel == 0) {
-                var isWeaponGranted = 1
-                var grantItemsIds = [weaponName]
+                isWeaponGranted = 1;
+                let grantItemsIds = [weaponName];
                 //player got boombot?
                 if (configs[boombotId].playerHasBoombot === false) {
-                    configs[boombotId].playerHasBoombot = true
-                    grantItemsIds.push(boombotName)
-                    var isBoombotGranted = 1
-                    configs[boombotId].boombotCostume = 1
-                    configs[boombotId].weapon = weaponId % 4 + 1
-                    configs[boombotId].weaponCostume = 1
-                    log.debug("weaponid " + configs[boombotId][1])
+                    configs[boombotId].playerHasBoombot = true;
+                    grantItemsIds.push(boombotName);
+                    isBoombotGranted = 1;
+                    configs[boombotId].boombotCostume = 1;
+                    configs[boombotId].weapon = weaponId % 4 + 1;
+                    configs[boombotId].weaponCostume = 1;
+                    log.debug("weaponid " + configs[boombotId][1]);
                 }
                 itemLevel[weaponId].weaponLevel = 1
-                var updateUserReadOnly = {
+                let updateUserReadOnly = {
                     PlayFabId: currentPlayerId,
                     Data: {
                         "configs": JSON.stringify(configs),
                         "itemLevel": JSON.stringify(itemLevel)
                     }
-                }
+                };
                 server.UpdateUserReadOnlyData(updateUserReadOnly);
-                var grantItems = {
+                let grantItems = {
                     PlayFabId: currentPlayerId,
                     ItemIds: grantItemsIds
-                }
+                };
                 server.GrantItemsToUser(grantItems);
 
-                var expAmount = 0
-                var currentExp = 0
+                var expAmount = 0;
+                var currentExp = 0;
             } else {
                 //Math.floor(Math.random() * (max - min + 1) ) + min;
                 if (boxType == "StarterBox") {
@@ -1135,9 +1142,9 @@ handlers.OpenBox = function (args) {
                     Data: {
                         "itemLevel": JSON.stringify(itemLevel)
                     }
-                }
+                };
                 server.UpdateUserReadOnlyData(updateUserReadOnly);
-                var currentExp = itemLevel[weaponId].weaponExp
+                var currentExp = itemLevel[weaponId].weaponExp;
             }
         }
     }
@@ -1149,7 +1156,7 @@ handlers.OpenBox = function (args) {
         "grantedCoin": grantedCoin,
         "expAmount": expAmount,
         "currentExp": currentExp
-    }
+    };
 }
 
 handlers.EquipItem = function (args) {
@@ -1171,25 +1178,25 @@ handlers.EquipItem = function (args) {
     let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId,
     });
-    let boomBotId = getBoombot(args.boombot)
-    let weaponId = (4 * boomBotId) + args.wpn - 1
+    let boomBotId = getBoombot(args.boombot);
+    let weaponId = (4 * boomBotId) + args.wpn - 1;
     //select boombot values
-    let equipped/* = JSON.parse(currentPlayerData.Data.equipped.Value)*/;
+    let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let configs = JSON.parse(currentPlayerData.Data.configs.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
     if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId].weaponLevel >= 1) {
-        /*equipped.boombot = args.boombot;
+        equipped.boombot = args.boombot;
         equipped.boombotCostume = args.cos;
         equipped.weaponCostume = args.wpn;
-        equipped.weaponCostume = args.wpnCos;*/
+        equipped.weaponCostume = args.wpnCos;
         configs[boomBotId].boombotCostume = args.cos;
         configs[boomBotId].weapons[args.wpn].weaponCostume = args.wpnCos;
-        equipped = {
+       /* equipped = {
             "boombotId" : configs[boomBotId].boombotId,
             "weapon" : configs[boomBotId].weapons[args.wpn].weaponId,
             "costume" : configs[boomBotId].boombotCostume,
             "weaponCostume" : configs[boomBotId].weapons[args.wpn].weaponCostume
-        };
+        };*/
             //configs[boomBotId];
     }
     let updateEquippedItems = {
@@ -1230,9 +1237,28 @@ handlers.GetUserGameParams = function () {
     let equipped = JSON.parse(userData.Data.equipped.Value);
     let configs = JSON.parse(userData.Data.configs.Value);
 
+    ////TODO: Temporary workaround
+
+    let newEquipped = [];
+    newEquipped.push(equipped.boombotName);
+    newEquipped.push(equipped.weapon);
+    newEquipped.push(equipped.costume);
+    newEquipped.push(equipped.weaponCostume);
+
+    let newConfigs = [];
+    let newConfig = [];
+    for(let i = 0; i < 4; i++){
+        newConfig.push(configs[i].boombotCostume);
+        newConfig.push(configs[i].weapon);
+        newConfig.push(configs[i].weaponCostume);
+        newConfigs.push(newConfig);
+    }
+
+    ////
+
     return {
-        "equipped": equipped,
-        "configs": configs,
+        "equipped": newEquipped,
+        "configs": newConfigs,
         "itemLevel": itemLevel,
         "HealthPoints": HP,
         "Damage": DMG,
