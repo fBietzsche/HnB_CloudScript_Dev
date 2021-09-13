@@ -101,11 +101,9 @@ function winCondition(winArgs) {
     // TODO MAX Trophy
     let maxTrophy = currentPlayerData.Data.maxTrophy.Value;
 
-
-    //TODO: un-hardcode these values
-    let accountExpGained = 20
-    let trophyChange = 9
-    let tradedBattery = 0
+    let accountExpGained = 20;
+    let trophyChange = 9;
+    let tradedBattery = 0;
 
     matchStats.winCount += 1;
     accountExp[1] += accountExpGained;
@@ -113,7 +111,7 @@ function winCondition(winArgs) {
     let newTrophy = trophy + trophyChange;
 
     if (newTrophy > maxTrophy) {
-        maxTrophy = newTrophy
+        maxTrophy = newTrophy;
     }
 
     itemLevel[equippedWeaponId].weaponTrophy += trophyChange;
@@ -124,14 +122,14 @@ function winCondition(winArgs) {
     });
 
     let reserveBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.BR);
-    let oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB)
+    let oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB);
 
     let batteryGained = 0;
 
     if (reserveBooster >= 15) {
         batteryGained = 15;
     } else {
-        batteryGained = reserveBooster
+        batteryGained = reserveBooster;
     }
 
     let isBoxGiven = 0;
@@ -161,27 +159,8 @@ function winCondition(winArgs) {
     if (5 == matchHistory.length) {
         matchHistory.pop();
     }
-    /*let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
-        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained]
-    */
-    //TODO: change thisMatch to object from array.
-
-
-    let thisMatch = {
-        "date" : new Date().toISOString(),
-        "winnerPlayers" : winnerPlayers,
-        "loserPlayers" : loserPlayers,
-        "drawPlayers" : drawPlayers,
-        "oldBooster" : oldBooster,
-        "tradedBattery" : tradedBattery,
-        "isBoxGiven" : isBoxGiven,
-        "trophy" : trophy,
-        "newTrophy" : newTrophy,
-        "matchId" : ongoingMatch.matchId,
-        "accountExpGained" : accountExpGained,
-        "trophyChange" : trophyChange,
-        "batteryGained" : batteryGained
-    };
+    let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
+        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained];
 
     matchHistory.unshift(thisMatch);
     //ongoingMatch = ["0", "0", "0", "0", 0]
@@ -203,52 +182,47 @@ function winCondition(winArgs) {
             "itemLevel": JSON.stringify(itemLevel),
             "maxTrophy": maxTrophy
         }
-    }
+    };
 
     server.UpdateUserReadOnlyData(UpdateUserReadOnlyData);
 }
 
 function loseCondition(loseArgs) {
-    var PlayerId = loseArgs[0];
-    var winnerPlayers = loseArgs[1];
-    var loserPlayers = loseArgs[2];
-    var drawPlayers = [];
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let PlayerId = loseArgs[0];
+    let winnerPlayers = loseArgs[1];
+    let loserPlayers = loseArgs[2];
+    let drawPlayers = [];
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
     });
-    var currentPlayerTrophy = server.GetPlayerStatistics({
+    let currentPlayerTrophy = server.GetPlayerStatistics({
         PlayFabId: PlayerId,
         "StatisticNames": "Trophy"
     });
-    var matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
-    var matchStats = JSON.parse(currentPlayerData.Data.matchStats.Value);
-    var ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
-    var trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value)
-    var accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
-    var doubleBattery = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
+    let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
+    let matchStats = JSON.parse(currentPlayerData.Data.matchStats.Value);
+    let ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
+    let trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value)
+    let accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
+    let doubleBattery = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
 
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
     let equippedBoomBotId = equipped.boombotId;
-    let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1
+    let equippedWeaponId = (4 * equippedBoomBotId) + equipped.weapon - 1;
 
 
-    var accountExpGained = 10
-    var trophyChange = 0
-    var tradedBattery = 0
+    let accountExpGained = 10;
+    let trophyChange = 0;
+    let tradedBattery = 0;
+
     if (trophy >= 50) {
-        trophyChange = (-1)*(1 + Math.floor(trophy / 100))
+        trophyChange = (-1)*(1 + Math.floor(trophy / 100));
     }
     matchStats.loseCount += 1;
     accountExp[1] += accountExpGained;
 
-    //TODO: potential bug? trophy will never be less than trophyChange
-
-    if (trophy <= trophyChange) {
-        var newTrophy = 0
-    } else {
-        var newTrophy = trophy + trophyChange;
-    }
+    let newTrophy = (trophy <= trophyChange) ? 0 : trophy + trophyChange;
 
     if(itemLevel[equippedWeaponId].weaponTrophy + trophyChange <= 0)
     {
@@ -260,16 +234,14 @@ function loseCondition(loseArgs) {
     }
 
 
-    var currentPlayerInventory = server.GetUserInventory({
+    let currentPlayerInventory = server.GetUserInventory({
         PlayFabId: PlayerId
     });
-    var reserveBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.BR);
-    var oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB)
-    if (reserveBooster >= 5) {
-        var batteryGained = 5;
-    } else {
-        var batteryGained = reserveBooster
-    }
+    let reserveBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.BR);
+    let oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB)
+
+    let batteryGained = (reserveBooster >= 5) ? 5 : reserveBooster;
+
     //double battery checker
     if (doubleBattery <= batteryGained) {
         tradedBattery = doubleBattery + batteryGained;
@@ -281,25 +253,10 @@ function loseCondition(loseArgs) {
     if (5 == matchHistory.length) {
         matchHistory.pop();
     }
-    var isBoxGiven = 0;
-/*    var thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
+    let isBoxGiven = 0;
+    let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
         oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained]
-*/
-    let thisMatch = {
-        "date" : new Date().toISOString(),
-        "winnerPlayers" : winnerPlayers,
-        "loserPlayers" : loserPlayers,
-        "drawPlayers" : drawPlayers,
-        "oldBooster" : oldBooster,
-        "tradedBattery" : tradedBattery,
-        "isBoxGiven" : isBoxGiven,
-        "trophy" : trophy,
-        "newTrophy" : newTrophy,
-        "matchId" : ongoingMatch.matchId,
-        "accountExpGained" : accountExpGained,
-        "trophyChange" : trophyChange,
-        "batteryGained" : batteryGained
-    };
+
 
     matchHistory.unshift(thisMatch);
     //var ongoingMatch = ["0", "0", "0", "0", 0]
@@ -310,7 +267,7 @@ function loseCondition(loseArgs) {
     ongoingMatch.address = "0";
     ongoingMatch.date = 0;
 
-    var updateUserData = {
+    let updateUserData = {
         PlayFabId: PlayerId,
         Data: {
             "matchStats": JSON.stringify(matchStats),
@@ -324,39 +281,37 @@ function loseCondition(loseArgs) {
 }
 
 function drawCondition(drawArgs) {
-    var PlayerId = drawArgs[0];
-    var drawPlayers = drawArgs[1];
-    var winnerPlayers = [];
-    var loserPlayers = [];
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let PlayerId = drawArgs[0];
+    let drawPlayers = drawArgs[1];
+    let winnerPlayers = [];
+    let loserPlayers = [];
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
     });
-    var currentPlayerTrophy = server.GetPlayerStatistics({
+    let currentPlayerTrophy = server.GetPlayerStatistics({
         PlayFabId: PlayerId,
         "StatisticNames": "Trophy"
     });
-    var trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value)
-    var newTrophy = trophy;
-    var currentPlayerInventory = server.GetUserInventory({
+    let trophy = JSON.parse(currentPlayerTrophy.Statistics[0].Value)
+    let newTrophy = trophy;
+    let currentPlayerInventory = server.GetUserInventory({
         PlayFabId: PlayerId
     });
-    var matchStats = JSON.parse(currentPlayerData.Data.matchStats.Value);
-    var matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
-    var ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
-    var accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
-    var reserveBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.BR);
-    var oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB)
-    var doubleBattery = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
-    var accountExpGained = 15
-    var trophyChange = 0
-    var tradedBattery = 0
+    let matchStats = JSON.parse(currentPlayerData.Data.matchStats.Value);
+    let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
+    let ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
+    let accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
+    let reserveBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.BR);
+    let oldBooster = JSON.parse(currentPlayerInventory.VirtualCurrency.TB)
+    let doubleBattery = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
+    let accountExpGained = 15;
+    let trophyChange = 0;
+    let tradedBattery = 0;
     accountExp[1] = accountExp[1] + accountExpGained;
     matchStats.drawCount += 1;
-    if (reserveBooster >= 10) {
-        var batteryGained = 10;
-    } else {
-        var batteryGained = reserveBooster
-    }
+
+    let batteryGained = (reserveBooster >= 10) ? 10 : reserveBooster;
+
     //double battery checker
     if (doubleBattery <= batteryGained) {
         tradedBattery = doubleBattery + batteryGained;
@@ -368,25 +323,10 @@ function drawCondition(drawArgs) {
     if (5 == matchHistory.length) {
         matchHistory.pop();
     }
-    var isBoxGiven = 0;
-   /* var thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
+    let isBoxGiven = 0;
+    let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
         oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch[1], accountExpGained, trophyChange, batteryGained]
-    */
-    let thisMatch = {
-        "date" : new Date().toISOString(),
-        "winnerPlayers" : winnerPlayers,
-        "loserPlayers" : loserPlayers,
-        "drawPlayers" : drawPlayers,
-        "oldBooster" : oldBooster,
-        "tradedBattery" : tradedBattery,
-        "isBoxGiven" : isBoxGiven,
-        "trophy" : trophy,
-        "newTrophy" : newTrophy,
-        "matchId" : ongoingMatch.matchId,
-        "accountExpGained" : accountExpGained,
-        "trophyChange" : trophyChange,
-        "batteryGained" : batteryGained
-    };
+
     matchHistory.unshift(thisMatch);
     //var ongoingMatch = ["0", "0", "0", "0", 0]
 
@@ -396,7 +336,7 @@ function drawCondition(drawArgs) {
     ongoingMatch.address = "0";
     ongoingMatch.date = 0;
 
-    var updateUserData = {
+    let updateUserData = {
         PlayFabId: PlayerId,
         Data: {
             "matchStats": JSON.stringify(matchStats),
@@ -411,22 +351,22 @@ function drawCondition(drawArgs) {
 
 function winConditionUpdate(winArgs) {
     log.debug("winConditionUpdate")
-    var PlayerId = winArgs;
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let PlayerId = winArgs;
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
     });
-    var matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
+    let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
     //give booster if available
-    var tradedBattery = matchHistory[0][5];
-    var batteryGained = matchHistory[0][12];
+    let tradedBattery = matchHistory[0][5];
+    let batteryGained = matchHistory[0][12];
     if (tradedBattery >= 1) {
 
-        var subBooster = {
+        let subBooster = {
             PlayFabId: PlayerId,
             VirtualCurrency: "BR",
             Amount: batteryGained
         }
-        var addBooster = {
+        let addBooster = {
             PlayFabId: PlayerId,
             VirtualCurrency: "TB",
             Amount: tradedBattery
@@ -436,7 +376,7 @@ function winConditionUpdate(winArgs) {
         server.AddUserVirtualCurrency(addBooster);
     }
     //new trophy update
-    var newTrophy = matchHistory[0][8];
+    let newTrophy = matchHistory[0][8];
     server.UpdatePlayerStatistics({
         "PlayFabId": PlayerId,
         "Statistics": [
@@ -449,21 +389,21 @@ function winConditionUpdate(winArgs) {
 }
 
 function loseConditionUpdate(loseArgs) {
-    var PlayerId = loseArgs;
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let PlayerId = loseArgs;
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
     });
-    var matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
+    let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
     //give booster if available
-    var tradedBattery = matchHistory[0][5];
-    var batteryGained = matchHistory[0][12];
+    let tradedBattery = matchHistory[0][5];
+    let batteryGained = matchHistory[0][12];
     if (tradedBattery >= 1) {
-        var subBooster = {
+        let subBooster = {
             PlayFabId: PlayerId,
             VirtualCurrency: "BR",
             Amount: batteryGained
         }
-        var addBooster = {
+        let addBooster = {
             PlayFabId: PlayerId,
             VirtualCurrency: "TB",
             Amount: tradedBattery
@@ -473,7 +413,7 @@ function loseConditionUpdate(loseArgs) {
         server.AddUserVirtualCurrency(addBooster);
     }
     //new trophy update
-    var newTrophy = matchHistory[0][8];
+    let newTrophy = matchHistory[0][8];
     server.UpdatePlayerStatistics({
         "PlayFabId": PlayerId,
         "Statistics": [
@@ -486,21 +426,21 @@ function loseConditionUpdate(loseArgs) {
 }
 
 function drawConditionUpdate(drawArgs) {
-    var PlayerId = drawArgs;
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let PlayerId = drawArgs;
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
     });
-    var matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
+    let matchHistory = JSON.parse(currentPlayerData.Data.matchHistory.Value);
     //give booster if available
-    var tradedBattery = matchHistory[0][5];
-    var batteryGained = matchHistory[0][12];
+    let tradedBattery = matchHistory[0][5];
+    let batteryGained = matchHistory[0][12];
     if (tradedBattery >= 1) {
-        var subBooster = {
+        let subBooster = {
             PlayFabId: PlayerId,
             VirtualCurrency: "BR",
             Amount: batteryGained
         }
-        var addBooster = {
+        let addBooster = {
             PlayFabId: PlayerId,
             VirtualCurrency: "TB",
             Amount: tradedBattery
@@ -513,20 +453,20 @@ function drawConditionUpdate(drawArgs) {
 function accountLevelUpCheck() {
 
     //Get data
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var titleData = server.GetTitleData({
+    let titleData = server.GetTitleData({
         PlayFabId: currentPlayerId,
         "Keys": "accountLevel"
     });
 
     //Set data
-    var doubleBatteryTotal = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
-    var accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
-    var accountLevel = JSON.parse(titleData.Data.accountLevel);
-    var isLevelUp = 0;
-    var doubleBatteryFromLevelUp = 0;
+    let doubleBatteryTotal = JSON.parse(currentPlayerData.Data.doubleBattery.Value);
+    let accountExp = JSON.parse(currentPlayerData.Data.accountExp.Value);
+    let accountLevel = JSON.parse(titleData.Data.accountLevel);
+    let isLevelUp = 0;
+    let doubleBatteryFromLevelUp = 0;
 
     //if OK level up and give double battery
     log.debug("required exp = " + Math.floor(30 * Math.pow(accountExp[0], 1.05)))
@@ -534,7 +474,7 @@ function accountLevelUpCheck() {
         accountExp[0] = accountExp[0] + 1
         doubleBatteryFromLevelUp = 20
         doubleBatteryTotal += doubleBatteryFromLevelUp;
-        var accLevelUp = {
+        let accLevelUp = {
             PlayFabId: currentPlayerId,
             Data: {
                 "accountExp": JSON.stringify(accountExp),
@@ -544,9 +484,9 @@ function accountLevelUpCheck() {
         server.UpdateUserReadOnlyData(accLevelUp);
         isLevelUp = 1
     }
-    var currentAccLevel = accountExp[0]
-    var currentAccExp = accountExp[1]
-    var requiredAccExp = accountLevel[currentAccLevel]
+    let currentAccLevel = accountExp[0]
+    let currentAccExp = accountExp[1]
+    let requiredAccExp = accountLevel[currentAccLevel]
     return [isLevelUp, doubleBatteryFromLevelUp, doubleBatteryTotal, currentAccLevel, currentAccExp, requiredAccExp]
 }
 
@@ -670,20 +610,20 @@ handlers.UnlockReward = function (args) {
 }
 
 handlers.Debug = function () {
-    var userData = server.GetUserReadOnlyData({
+    let userData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var titleData = server.GetTitleData({
+    let titleData = server.GetTitleData({
         PlayFabId: currentPlayerId,
         "Keys": ["levelData", "weaponValues"]
     });
     log.debug("userData  =  " + userData)
     log.debug("titleData  =  " + titleData)
-    var itemLevel = JSON.parse(userData.Data.itemLevel.Value);
+    let itemLevel = JSON.parse(userData.Data.itemLevel.Value);
     log.debug("itemLevel  =  " + itemLevel)
-    var levelData = JSON.parse(titleData.Data.levelData)
+    let levelData = JSON.parse(titleData.Data.levelData)
     log.debug("levelData  =  " + levelData)
-    var weaponData = titleData.Data.weaponValues;
+    let weaponData = titleData.Data.weaponValues;
     log.debug("weaponData  =  " + weaponData)
 }
 
