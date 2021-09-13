@@ -1269,54 +1269,54 @@ handlers.GetUserGameParams = function () {
 handlers.UpgradeWeapon = function (args) {
     //usable when an boombot can be upgraded
     args.whichWeapon = !args.whichWeapon ? {} : args.whichWeapon;
-    var whichWeapon = args.whichWeapon;
+    let whichWeapon = args.whichWeapon;
     //get user item info and VC
-    var currentPlayerData = server.GetUserReadOnlyData({
+    let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
-    var currentPlayerInventory = server.GetUserInventory({
+    let currentPlayerInventory = server.GetUserInventory({
         PlayFabId: currentPlayerId
     });
-    var titleData = server.GetTitleData({
+    let titleData = server.GetTitleData({
         PlayFabId: currentPlayerId,
         "Keys": "levelData"
     });
 
-    var itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    var playerCoin = JSON.parse(currentPlayerInventory.VirtualCurrency.CN);
-    var levelData = JSON.parse(titleData.Data.levelData);
-    var levelRamp = levelData.levelRamp;
-    var levelCoin = levelData.levelCoin;
-    var currentExp = itemLevel[whichWeapon].weaponExp;
-    var requiredExp = levelRamp[itemLevel[whichWeapon].weaponLevel - 1]
-    var requiredCoin = levelCoin[itemLevel[whichWeapon].weaponLevel - 1]
-    var isUpgraded = 0
+    let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
+    let playerCoin = JSON.parse(currentPlayerInventory.VirtualCurrency.CN);
+    let levelData = JSON.parse(titleData.Data.levelData);
+    let levelRamp = levelData.levelRamp;
+    let levelCoin = levelData.levelCoin;
+    let currentExp = itemLevel[whichWeapon].weaponExp;
+    let requiredExp = levelRamp[itemLevel[whichWeapon].weaponLevel - 1];
+    let requiredCoin = levelCoin[itemLevel[whichWeapon].weaponLevel - 1];
+    let isUpgraded = 0;
 
     //if OK level up
-    if (itemLevel[whichWeapon].weaponLevel <= 9) {
+    if (itemLevel[whichWeapon].weaponLevel < WeaponMaxLevel) {
         if ((playerCoin >= requiredCoin) && (currentExp >= requiredExp)) {
-            itemLevel[whichWeapon].weaponExp -= requiredExp
+            itemLevel[whichWeapon].weaponExp -= requiredExp;
             itemLevel[whichWeapon].weaponLevel += 1;
-            currentExp = itemLevel[whichWeapon].weaponExp
-            var upgradeItem = {
+            currentExp = itemLevel[whichWeapon].weaponExp;
+            let upgradeItem = {
                 PlayFabId: currentPlayerId,
                 Data: { "itemLevel": JSON.stringify(itemLevel) }
-            }
+            };
             server.UpdateUserReadOnlyData(upgradeItem);
-            var subCoin = {
+            let subCoin = {
                 PlayFabId: currentPlayerId,
                 VirtualCurrency: "CN",
                 Amount: requiredCoin
-            }
+            };
             server.SubtractUserVirtualCurrency(subCoin);
-            isUpgraded = 1
+            isUpgraded = 1;
         }
 
     }
     return {
         "isUpgraded": isUpgraded,
         "currentExp": currentExp
-    }
+    };
 }
 
 handlers.OnMatchStart = function (args) {
@@ -1348,7 +1348,7 @@ handlers.OnMatchStart = function (args) {
     ongoingMatch[2] = args.MatchType
     ongoingMatch[3] = args.Adress
     ongoingMatch[4] = getTimeInSeconds*/
-    var UpdateUserReadOnlyData = {
+    let UpdateUserReadOnlyData = {
         PlayFabId: currentPlayerId,
         Data: {
             "ongoingMatch": JSON.stringify(ongoingMatch)
@@ -1397,14 +1397,13 @@ handlers.GetCurrentEquipment = function () {
         "weapon": equipped.weapon,
         "weaponCostume": equipped.weaponCostume,
         "itemLevel": itemLevel[equipped.weapon].weaponLevel
-    }
+    };
 }
 
 handlers.FinishTutorial = function (args) {
+    let currentTutorialProgress = args.Value;
     let currentPlayerData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
-    let currentTutorialProgress = JSON.parse(currentPlayerData.Data.tutorialProgress.Value);
     let starterBoxProgress = JSON.parse(currentPlayerData.Data.starterBoxProgress.Value);
-    currentTutorialProgress = args.Value;
     /*var UpdateUserReadOnlyData =
     {
         PlayFabId: currentPlayerId,
@@ -1414,8 +1413,9 @@ handlers.FinishTutorial = function (args) {
     }
     server.UpdateUserReadOnlyData(UpdateUserReadOnlyData);
     */
+    let slots;
     if (currentTutorialProgress == 5 && starterBoxProgress == 0) {
-        var slots = JSON.parse(currentPlayerData.Data.slots.Value);
+        slots = JSON.parse(currentPlayerData.Data.slots.Value);
 
         slots[0].isReady = false;
         slots[0].isAvailable = false;
@@ -1426,7 +1426,7 @@ handlers.FinishTutorial = function (args) {
     }
     if (currentTutorialProgress == 5 && starterBoxProgress == 1) {
         //todo add player data check if it was given before to ensure only once adding of batteries
-        var addBooster = {
+        let addBooster = {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "TB",
             Amount: 60
@@ -1446,7 +1446,7 @@ handlers.FinishTutorial = function (args) {
 }
 
 handlers.GetTutorialProgress = function () {
-    var currentPlayerData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
+    let currentPlayerData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId });
     return currentPlayerData.Data.tutorialProgress;
 }
 
