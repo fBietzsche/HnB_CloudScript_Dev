@@ -1229,15 +1229,16 @@ handlers.GetUserGameParams = function () {
     for (i = 0; i < WeaponCount; i++) {
         nextLevel.push([]);
         DMG.push([]);
-        HP[i] = weaponData[i][7] + (weaponData[i][7] * (itemLevel[i].weaponLevel - 1) * 0.05);
+        //HP[i] = weaponData[i][7] + (weaponData[i][7] * (itemLevel[i].weaponLevel - 1) * 0.05);
+        HP[i] = weaponData[i].hitPoints + (weaponData[i].hitPoints * (itemLevel[i].weaponLevel - 1) * 0.05);
         nextLevel[i][0] = nextExp[itemLevel[i].weaponLevel];
         nextLevel[i][1] = nextCoin[itemLevel[i].weaponLevel];
-        DMG[i] = Math.round(weaponData[i][0] + (weaponData[i][0] * (itemLevel[i].weaponLevel - 1) * 0.05));
+        DMG[i] = Math.round(weaponData[i].damage + (weaponData[i].damage * (itemLevel[i].weaponLevel - 1) * 0.05));
     }
     let equipped = JSON.parse(userData.Data.equipped.Value);
     let configs = JSON.parse(userData.Data.configs.Value);
 
-    //////////////////////TODO: Temporary workaround
+    //////////////////////TODO: Temporary workaround start
 
     let newEquipped = [];
     newEquipped.push(getBoombot(equipped.boombotId));
@@ -1257,7 +1258,7 @@ handlers.GetUserGameParams = function () {
     return {
         "equipped": newEquipped,
         "configs": newConfigs,
-    ///////////////////////////////////
+    //////////////////////TODO: Temporary workaround end
         "itemLevel": itemLevel,
         "HealthPoints": HP,
         "Damage": DMG,
