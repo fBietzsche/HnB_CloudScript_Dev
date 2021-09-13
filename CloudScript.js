@@ -1237,7 +1237,7 @@ handlers.GetUserGameParams = function () {
     let equipped = JSON.parse(userData.Data.equipped.Value);
     let configs = JSON.parse(userData.Data.configs.Value);
 
-    ////TODO: Temporary workaround
+    //////////////////////TODO: Temporary workaround
 
     let newEquipped = [];
     newEquipped.push(getBoombot(equipped.boombotId));
@@ -1254,11 +1254,10 @@ handlers.GetUserGameParams = function () {
         newConfigs.push(newConfig);
     }
 
-    ////
-
     return {
         "equipped": newEquipped,
         "configs": newConfigs,
+    ///////////////////////////////////
         "itemLevel": itemLevel,
         "HealthPoints": HP,
         "Damage": DMG,
@@ -1333,21 +1332,14 @@ handlers.OnMatchStart = function (args) {
     args.MatchType = !args.MatchType ? {} : args.MatchType;
     args.Adress = !args.Adress ? {} : args.Adress;
 
-    //var ongoingMatch = [0, 0, 0, 0, 0]
+    let ongoingMatch = [0, 0, 0, 0, 0]
 
-    let ongoingMatch = {
-        "playerGameliftId" : args.PlayerGameliftId,
-        "matchId" : args.MatchId,
-        "matchType" : args.MatchType,
-        "address" : args.Adress,
-        "date" :  getTimeInSeconds()
-    };
 
-    /*ongoingMatch[0] = args.PlayerGameliftId
+    ongoingMatch[0] = args.PlayerGameliftId
     ongoingMatch[1] = args.MatchId
     ongoingMatch[2] = args.MatchType
     ongoingMatch[3] = args.Adress
-    ongoingMatch[4] = getTimeInSeconds*/
+    ongoingMatch[4] = getTimeInSeconds();
     let UpdateUserReadOnlyData = {
         PlayFabId: currentPlayerId,
         Data: {
@@ -1364,8 +1356,8 @@ handlers.GetOngoingMatch = function () {
     });
     let ongoingMatch = JSON.parse(currentPlayerData.Data.ongoingMatch.Value);
     return {
-        "PlayerGameliftId": ongoingMatch.playerGameliftId,
-        "Adress": ongoingMatch.address
+        "PlayerGameliftId": ongoingMatch[0],
+        "Adress": ongoingMatch[3]
     };
     /*   var matchDuration = getMatchDuration(ongoingMatch[2])
        var matchEndTime = ongoingMatch[4] + matchDuration
@@ -1430,9 +1422,9 @@ handlers.FinishTutorial = function (args) {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "TB",
             Amount: 60
-        }
+        };
         server.AddUserVirtualCurrency(addBooster);
-        starterBoxProgress = 2
+        starterBoxProgress = 2;
     }
     let updateUserReadOnly = {
         PlayFabId: currentPlayerId,
