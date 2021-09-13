@@ -1240,7 +1240,7 @@ handlers.GetUserGameParams = function () {
     ////TODO: Temporary workaround
 
     let newEquipped = [];
-    newEquipped.push(equipped.boombotName);
+    newEquipped.push(getBoombot(equipped.boombotId));
     newEquipped.push(equipped.weapon);
     newEquipped.push(equipped.costume);
     newEquipped.push(equipped.weaponCostume);
