@@ -1187,10 +1187,10 @@ handlers.EquipItem = function (args) {
     if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId].weaponLevel >= 1) {
         equipped.boombot = args.boombot;
         equipped.boombotCostume = args.cos;
-        equipped.weaponCostume = args.wpn;
+        equipped.weapon = args.wpn;
         equipped.weaponCostume = args.wpnCos;
         configs[boomBotId].boombotCostume = args.cos;
-        configs[boomBotId].weapons[args.wpn].weaponCostume = args.wpnCos;
+        configs[boomBotId].weaponCostume = args.wpnCos;
        /* equipped = {
             "boombotId" : configs[boomBotId].boombotId,
             "weapon" : configs[boomBotId].weapons[args.wpn].weaponId,
