@@ -912,6 +912,23 @@ handlers.CheckSlots = function (args) {
     };
 }
 
+function GetMVP(winnerPlayers)
+{
+    let maxIndex = 0;
+    for(let i = 0; i < winnerPlayers.length; i++){
+        if(winnerPlayers[i].KDAScore > winnerPlayers[maxIndex].KDAScore){
+            maxIndex = i;
+        }
+    }
+    return winnerPlayers[maxIndex];
+}
+
+function GetKDAScore(player)
+{
+    player.deaths = player.deaths == 0 ? 0.5 : player.deaths;
+    return player.kills / player.deaths;
+}
+
 handlers.EndMatch = function (args) {
     //End match functions handler
     /*args must be in this format:
@@ -928,9 +945,11 @@ handlers.EndMatch = function (args) {
     let winnerPlayers = args.winnerPlayers;
     let loserPlayers = args.loserPlayers;
     let drawPlayers = args.drawPlayers;
+
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
-        let winArgs = [winnerPlayers[i], winnerPlayers, loserPlayers];
+        winnerPlayers[i].KDAScore = GetKDAScore(winnerPlayers[i]);
+        let winArgs = [winnerPlayers[i].playfabId, winnerPlayers, loserPlayers];
         winCondition(winArgs)
     }
 
@@ -945,7 +964,13 @@ handlers.EndMatch = function (args) {
         let drawArgs = [drawPlayers[i], drawPlayers];
         drawCondition(drawArgs)
     }
-    return 1;
+
+    let MVP = GetMVP(winnerPlayers);
+
+    return {
+        "result" : 1,
+        "MVP" : MVP
+    };
 }
 
 handlers.EndMatchUpdate = function (args) {
@@ -1254,11 +1279,11 @@ handlers.GetUserGameParams = function () {
         newConfig.push(configs[i].weaponCostume);
         newConfigs.push(newConfig);
     }
-    //////////////////////TODO: Temporary workaround end
 
     return {
         "equipped": newEquipped,
         "configs": newConfigs,
+    //////////////////////TODO: Temporary workaround end
         "itemLevel": itemLevel,
         "HealthPoints": HP,
         "Damage": DMG,
