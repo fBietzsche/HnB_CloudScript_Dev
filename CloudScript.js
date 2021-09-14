@@ -1411,7 +1411,7 @@ handlers.GetCurrentEquipment = function () {
 
     return {
         "boombot": equipped.boombotId,
-        "boombotCostume": equipped.boombotCostume,
+        "costume": equipped.boombotCostume,
         "weapon": equipped.weapon,
         "weaponCostume": equipped.weaponCostume,
         "itemLevel": itemLevel[equipped.weapon].weaponLevel
