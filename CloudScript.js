@@ -916,13 +916,13 @@ handlers.CheckSlots = function (args) {
 
 function GetMVP(winnerPlayers)
 {
-    let maxIndex = 0;
+    let maxKDAIndex = 0;
     for(let i = 0; i < winnerPlayers.length; i++){
         if(winnerPlayers[i].KDAScore > winnerPlayers[maxIndex].KDAScore){
-            maxIndex = i;
+            maxKDAIndex = i;
         }
     }
-    return winnerPlayers[maxIndex];
+    return winnerPlayers[maxKDAIndex].PlayfabID;
 }
 
 function GetKDAScore(player)
