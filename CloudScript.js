@@ -949,7 +949,7 @@ handlers.EndMatch = function (args) {
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
         winnerPlayers[i].KDAScore = GetKDAScore(winnerPlayers[i]);
-        let winArgs = [winnerPlayers[i].playfabId, winnerPlayers, loserPlayers];
+        let winArgs = [winnerPlayers[i].PlayfabID, winnerPlayers, loserPlayers];
         winCondition(winArgs)
     }
 
