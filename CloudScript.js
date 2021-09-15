@@ -75,6 +75,7 @@ function winCondition(winArgs) {
     let PlayerId = winArgs[0];
     let winnerPlayers = winArgs[1];
     let loserPlayers = winArgs[2];
+    let MVP = winArgs[3];
     let drawPlayers = [];
     let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
@@ -160,7 +161,7 @@ function winCondition(winArgs) {
         matchHistory.pop();
     }
     let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
-        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained];
+        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained, MVP];
 
     matchHistory.unshift(thisMatch);
     //ongoingMatch = ["0", "0", "0", "0", 0]
@@ -191,6 +192,7 @@ function loseCondition(loseArgs) {
     let PlayerId = loseArgs[0];
     let winnerPlayers = loseArgs[1];
     let loserPlayers = loseArgs[2];
+    let MVP = loseArgs[3];
     let drawPlayers = [];
     let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: PlayerId
@@ -255,7 +257,7 @@ function loseCondition(loseArgs) {
     }
     let isBoxGiven = 0;
     let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
-        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained]
+        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained, MVP]
 
 
     matchHistory.unshift(thisMatch);
@@ -949,13 +951,18 @@ handlers.EndMatch = function (args) {
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
         winnerPlayers[i].KDAScore = GetKDAScore(winnerPlayers[i]);
-        let winArgs = [winnerPlayers[i].PlayfabID, winnerPlayers, loserPlayers];
-        winCondition(winArgs)
+    }
+
+    let MVP = GetMVP(winnerPlayers);
+
+    for(i = 0; i < winnerPlayers.length; i++){
+        let winArgs = [winnerPlayers[i].PlayfabID, winnerPlayers, loserPlayers, MVP];
+        winCondition(winArgs);
     }
 
     //Lose
     for (i = 0; i < loserPlayers.length; i++) {
-        let loseArgs = [loserPlayers[i], winnerPlayers, loserPlayers];
+        let loseArgs = [loserPlayers[i], winnerPlayers, loserPlayers, MVP];
         loseCondition(loseArgs)
     }
 
@@ -964,8 +971,6 @@ handlers.EndMatch = function (args) {
         let drawArgs = [drawPlayers[i], drawPlayers];
         drawCondition(drawArgs)
     }
-
-    let MVP = GetMVP(winnerPlayers);
 
     return {
         "result" : 1,
