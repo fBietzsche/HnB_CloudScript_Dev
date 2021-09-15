@@ -1264,13 +1264,13 @@ handlers.GetUserGameParams = function () {
     let configs = JSON.parse(userData.Data.configs.Value);
 
     //////////////////////TODO: Temporary workaround start
-/*
+
     let newEquipped = [];
     newEquipped.push(getBoombot(equipped.boombotId));
     newEquipped.push(equipped.weapon);
     newEquipped.push(equipped.costume);
     newEquipped.push(equipped.weaponCostume);
-*/
+
     let newConfigs = [];
     let newConfig = [];
     for(let i = 0; i < 4; i++){
@@ -1282,8 +1282,8 @@ handlers.GetUserGameParams = function () {
 
     return {
         "configs": newConfigs,
-    //////////////////////TODO: Temporary workaround end
-        "equipped": equipped,
+        "equipped": newEquipped,
+        //////////////////////TODO: Temporary workaround end
         "itemLevel": itemLevel,
         "HealthPoints": HP,
         "Damage": DMG,
