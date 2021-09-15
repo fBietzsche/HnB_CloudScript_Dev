@@ -1210,8 +1210,8 @@ handlers.EquipItem = function (args) {
     let configs = JSON.parse(currentPlayerData.Data.configs.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
     if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId].weaponLevel >= 1) {
-        equipped.boombot = args.boombot;
-        equipped.boombotCostume = args.cos;
+        equipped.boombotId = args.boombot;
+        equipped.costume = args.cos;
         equipped.weapon = args.wpn;
         equipped.weaponCostume = args.wpnCos;
         configs[boomBotId].boombotCostume = args.cos;
