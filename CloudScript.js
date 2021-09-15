@@ -1203,19 +1203,19 @@ handlers.EquipItem = function (args) {
     let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId,
     });
-    let boomBotId = getBoombot(args.boombot);
-    let weaponId = (4 * boomBotId) + args.wpn - 1;
+    let boombotId = getBoombot(args.boombot);
+    let weaponId = (4 * boombotId) + args.wpn - 1;
     //select boombot values
     let equipped = JSON.parse(currentPlayerData.Data.equipped.Value);
     let configs = JSON.parse(currentPlayerData.Data.configs.Value);
     let itemLevel = JSON.parse(currentPlayerData.Data.itemLevel.Value);
-    if (configs[boomBotId].playerHasBoombot === true && itemLevel[weaponId].weaponLevel >= 1) {
+    if (configs[boombotId].playerHasBoombot === true && itemLevel[weaponId].weaponLevel >= 1) {
         equipped.boombotId = boombotId;
         equipped.costume = args.cos;
         equipped.weapon = args.wpn;
         equipped.weaponCostume = args.wpnCos;
-        configs[boomBotId].boombotCostume = args.cos;
-        configs[boomBotId].weaponCostume = args.wpnCos;
+        configs[boombotId].boombotCostume = args.cos;
+        configs[boombotId].weaponCostume = args.wpnCos;
        /* equipped = {
             "boombotId" : configs[boomBotId].boombotId,
             "weapon" : configs[boomBotId].weapons[args.wpn].weaponId,
@@ -1414,7 +1414,7 @@ handlers.GetCurrentEquipment = function () {
         "boombotCostume": equipped.costume,
         "weapon": equipped.weapon,
         "weaponCostume": equipped.weaponCostume,
-        "itemLevel": itemLevel[(4 * equipped.boomBotId) + equipped.weapon - 1].weaponLevel
+        "itemLevel": itemLevel[(4 * equipped.boombotId) + equipped.weapon - 1].weaponLevel
     };
 }
 
