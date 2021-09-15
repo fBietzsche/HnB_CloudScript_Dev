@@ -1281,6 +1281,7 @@ handlers.GetUserGameParams = function () {
     }
 
     return {
+        "hey" : equipped.boombotId,
         "configs": newConfigs,
         "equipped": newEquipped,
         //////////////////////TODO: Temporary workaround end
