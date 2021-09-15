@@ -918,7 +918,7 @@ function GetMVP(winnerPlayers)
 {
     let maxKDAIndex = 0;
     for(let i = 0; i < winnerPlayers.length; i++){
-        if(winnerPlayers[i].KDAScore > winnerPlayers[maxIndex].KDAScore){
+        if(winnerPlayers[i].KDAScore > winnerPlayers[maxKDAIndex].KDAScore){
             maxKDAIndex = i;
         }
     }
