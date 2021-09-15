@@ -285,6 +285,7 @@ function loseCondition(loseArgs) {
 function drawCondition(drawArgs) {
     let PlayerId = drawArgs[0];
     let drawPlayers = drawArgs[1];
+    let MVP = drawArgs[2];
     let winnerPlayers = [];
     let loserPlayers = [];
     let currentPlayerData = server.GetUserReadOnlyData({
@@ -327,7 +328,7 @@ function drawCondition(drawArgs) {
     }
     let isBoxGiven = 0;
     let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
-        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch[1], accountExpGained, trophyChange, batteryGained]
+        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch[1], accountExpGained, trophyChange, batteryGained, MVP]
 
     matchHistory.unshift(thisMatch);
     //var ongoingMatch = ["0", "0", "0", "0", 0]
@@ -968,7 +969,7 @@ handlers.EndMatch = function (args) {
 
     //Draw
     for (i = 0; i < drawPlayers.length; i++) {
-        let drawArgs = [drawPlayers[i], drawPlayers];
+        let drawArgs = [drawPlayers[i], drawPlayers, MVP];
         drawCondition(drawArgs)
     }
 
