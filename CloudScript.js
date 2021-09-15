@@ -991,7 +991,7 @@ handlers.EndMatchUpdate = function (args) {
     let drawPlayers = args.drawPlayers;
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
-        let winArgs = winnerPlayers[i];
+        let winArgs = winnerPlayers[i].PlayfabID;
         winConditionUpdate(winArgs)
     }
 
