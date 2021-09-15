@@ -62,7 +62,7 @@ function getWeapon(weapon)
 
 handlers.getBoombot = function (boombot)
 {
-    return (typeof boombot.haha === "string") ? {"hehe": Object.keys(boombots).find(key => boombots[key] === boombot.haha)} : {"hehe":boombots[boombot.haha]};
+    return (typeof boombot.haha === "string") ? {"hehe": parseInt(Object.keys(boombots).find(key => boombots[key] === boombot.haha))} : {"hehe":boombots[boombot.haha]};
 }
 
 function getMatchDuration(matchType) {
