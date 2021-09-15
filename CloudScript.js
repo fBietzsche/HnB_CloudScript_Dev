@@ -60,7 +60,7 @@ function getWeapon(weapon)
     return (typeof weapon === "string") ? Object.keys(weapons).find(key => weapons[key] === weapon) : weapons[weapon];
 }
 
-function getBoombot(boombot)
+handlers.getBoombot = function (boombot)
 {
     return (typeof boombot === "string") ? Object.keys(boombots).find(key => boombots[key] === boombot) : boombots[boombot];
 }
