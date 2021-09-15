@@ -57,12 +57,12 @@ function Slot(isReady, isAvailable, startTime, endTime){
 
 function getWeapon(weapon)
 {
-    return (typeof weapon === "string") ? Object.keys(weapons).find(key => weapons[key] === weapon) : weapons[weapon];
+    return (typeof weapon === "string") ? parseInt(Object.keys(weapons).find(key => weapons[key] === weapon)) : weapons[weapon];
 }
 
-handlers.getBoombot = function (boombot)
+function getBoombot(boombot)
 {
-    return (typeof boombot.haha === "string") ? {"hehe": parseInt(Object.keys(boombots).find(key => boombots[key] === boombot.haha))} : {"hehe":boombots[boombot.haha]};
+    return (typeof boombot === "string") ? parseInt(Object.keys(boombots).find(key => boombots[key] === boombot)) : boombots[boombot];
 }
 
 function getMatchDuration(matchType) {
