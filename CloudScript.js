@@ -166,11 +166,7 @@ function winCondition(winArgs) {
     matchHistory.unshift(thisMatch);
     //ongoingMatch = ["0", "0", "0", "0", 0]
 
-    ongoingMatch.playerGameliftId = "0";
-    ongoingMatch.matchId = "0";
-    ongoingMatch.matchType = "0";
-    ongoingMatch.address = "0";
-    ongoingMatch.date = 0;
+    ongoingMatch = ["0", "0", "0", "0", 0];
 
     let UpdateUserReadOnlyData = {
         PlayFabId: PlayerId,
@@ -263,11 +259,8 @@ function loseCondition(loseArgs) {
     matchHistory.unshift(thisMatch);
     //var ongoingMatch = ["0", "0", "0", "0", 0]
 
-    ongoingMatch.playerGameliftId = "0";
-    ongoingMatch.matchId = "0";
-    ongoingMatch.matchType = "0";
-    ongoingMatch.address = "0";
-    ongoingMatch.date = 0;
+
+    ongoingMatch = ["0", "0", "0", "0", 0];
 
     let updateUserData = {
         PlayFabId: PlayerId,
@@ -333,11 +326,8 @@ function drawCondition(drawArgs) {
     matchHistory.unshift(thisMatch);
     //var ongoingMatch = ["0", "0", "0", "0", 0]
 
-    ongoingMatch.playerGameliftId = "0";
-    ongoingMatch.matchId = "0";
-    ongoingMatch.matchType = "0";
-    ongoingMatch.address = "0";
-    ongoingMatch.date = 0;
+
+    ongoingMatch = ["0", "0", "0", "0", 0];
 
     let updateUserData = {
         PlayFabId: PlayerId,
