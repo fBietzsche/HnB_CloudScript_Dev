@@ -161,7 +161,7 @@ function winCondition(winArgs) {
         matchHistory.pop();
     }
     let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
-        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained, MVP];
+        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch[1], accountExpGained, trophyChange, batteryGained, MVP];
 
     matchHistory.unshift(thisMatch);
     //ongoingMatch = ["0", "0", "0", "0", 0]
@@ -253,7 +253,7 @@ function loseCondition(loseArgs) {
     }
     let isBoxGiven = 0;
     let thisMatch = [new Date().toISOString(), winnerPlayers, loserPlayers, drawPlayers,
-        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch.matchId, accountExpGained, trophyChange, batteryGained, MVP]
+        oldBooster, tradedBattery, isBoxGiven, trophy, newTrophy, ongoingMatch[1], accountExpGained, trophyChange, batteryGained, MVP]
 
 
     matchHistory.unshift(thisMatch);
