@@ -929,7 +929,7 @@ handlers.GetUserDisplayName = function (args)
     });
 
     //.DisplayName.Value;
-    return result.UserInfo.TitleInfo;
+    return result.UserInfo.TitleInfo.DisplayName;
 }
 
 handlers.EndMatch = function (args) {
