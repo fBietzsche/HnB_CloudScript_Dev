@@ -924,11 +924,11 @@ function GetKDAScore(player)
 
 handlers.GetUserDisplayName = function (args)
 {
-    let userAccountInfo = server.GetUserAccountInfo({
+    let result = server.GetUserAccountInfo({
         PlayFabId: args.playfabID
     });
 
-    return userAccountInfo.TitleInfo.DisplayName;
+    return result.UserInfo.TitleInfo.DisplayName;
 }
 
 handlers.EndMatch = function (args) {
