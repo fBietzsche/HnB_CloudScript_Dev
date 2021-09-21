@@ -924,9 +924,7 @@ function GetKDAScore(player)
 
 handlers.GetUserDisplayName = function (playfabID)
 {
-    let userAccountInfo = server.GetUserAccountInfo({
-        PlayFabId: playfabID
-    });
+    let userAccountInfo = server.GetUserAccountInfo(playfabID);
 
     return userAccountInfo.TitleInfo.DisplayName;
 }
