@@ -931,13 +931,9 @@ handlers.EndMatch = function (args) {
             "drawPlayers":["x", "y", "z"]
         }
     */
-    args.winnerPlayers = !args.winnerPlayers ? {} : args.winnerPlayers;
-    args.loserPlayers = !args.loserPlayers ? {} : args.loserPlayers;
-    args.drawPlayers = !args.drawPlayers ? {} : args.drawPlayers;
-
-    let winnerPlayers = args.winnerPlayers;
-    let loserPlayers = args.loserPlayers;
-    let drawPlayers = args.drawPlayers;
+    let winnerPlayers = !args.winnerPlayers ? {} : args.winnerPlayers;
+    let loserPlayers = !args.loserPlayers ? {} : args.loserPlayers;
+    let drawPlayers = !args.drawPlayers ? {} : args.drawPlayers;
 
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
@@ -978,13 +974,10 @@ handlers.EndMatchUpdate = function (args) {
             "drawPlayers":["x", "y", "z"]
         }
     */
-    args.winnerPlayers = !args.winnerPlayers ? {} : args.winnerPlayers;
-    args.loserPlayers = !args.loserPlayers ? {} : args.loserPlayers;
-    args.drawPlayers = !args.drawPlayers ? {} : args.drawPlayers;
+    let winnerPlayers = !args.winnerPlayers ? {} : args.winnerPlayers;
+    let loserPlayers = !args.loserPlayers ? {} : args.loserPlayers;
+    let drawPlayers = !args.drawPlayers ? {} : args.drawPlayers;
 
-    let winnerPlayers = args.winnerPlayers;
-    let loserPlayers = args.loserPlayers;
-    let drawPlayers = args.drawPlayers;
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
         let winArgs = winnerPlayers[i].PlayfabID;
@@ -1074,16 +1067,16 @@ handlers.SpendRubySlot = function (args) {
             PlayFabId: currentPlayerId,
             VirtualCurrency: "RB",
             Amount: reqRuby
-        }
+        };
         server.SubtractUserVirtualCurrency(subBooster);
         let updateSlotTimer = {
             PlayFabId: currentPlayerId,
             Data: { "slots": JSON.stringify(slots) }
-        }
+        };
         server.UpdateUserReadOnlyData(updateSlotTimer);
-        isUsed = 1
+        isUsed = 1;
     }
-    return { "isUsed": isUsed }
+    return { "isUsed": isUsed };
 
 }
 
@@ -1095,7 +1088,7 @@ handlers.OpenBox = function (args) {
     let openBox = {
         PlayFabId: currentPlayerId,
         ContainerItemId: boxType
-    }
+    };
     let result = server.UnlockContainerItem(openBox);
     let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
@@ -1132,7 +1125,7 @@ handlers.OpenBox = function (args) {
                     configs[boombotId].weaponCostume = 1;
                     log.debug("weaponid " + configs[boombotId][1]);
                 }
-                itemLevel[weaponId].weaponLevel = 1
+                itemLevel[weaponId].weaponLevel = 1;
                 let updateUserReadOnly = {
                     PlayFabId: currentPlayerId,
                     Data: {
