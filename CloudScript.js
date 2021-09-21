@@ -922,6 +922,15 @@ function GetKDAScore(player)
     return player.kills / player.deaths;
 }
 
+handlers.GetUserDisplayName = function (playfabID)
+{
+    let userAccountInfo = server.GetUserAccountInfo({
+        PlayFabId: playfabID
+    });
+
+    return userAccountInfo.TitleInfo.DisplayName;
+}
+
 handlers.EndMatch = function (args) {
     //End match functions handler
     /*args must be in this format:
