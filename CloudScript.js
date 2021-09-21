@@ -928,7 +928,7 @@ handlers.GetUserDisplayName = function (args)
         PlayFabId: args.playfabID
     });
 
-    return result.UserInfo.TitleInfo.DisplayName;
+    return result.UserInfo.TitleInfo;
 }
 
 handlers.EndMatch = function (args) {
