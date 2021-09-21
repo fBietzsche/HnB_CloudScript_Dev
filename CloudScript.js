@@ -935,14 +935,6 @@ handlers.EndMatch = function (args) {
     let loserPlayers = !args.loserPlayers ? {} : args.loserPlayers;
     let drawPlayers = !args.drawPlayers ? {} : args.drawPlayers;
 
-    winnerPlayers =
-        [
-            {
-            "PlayfabID" : "F8DF7529B62ED448",
-            "kills" : 10,
-            "deaths" : 1
-            }
-        ];
     //Win
     for (i = 0; i < winnerPlayers.length; i++) {
         winnerPlayers[i].KDAScore = GetKDAScore(winnerPlayers[i]);
