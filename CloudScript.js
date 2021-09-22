@@ -913,7 +913,7 @@ function GetMVP(winnerPlayers)
             maxKDAIndex = i;
         }
     }
-    return winnerPlayers[maxKDAIndex].PlayfabID;
+    return GetUserDisplayName(winnerPlayers[maxKDAIndex].PlayfabID);
 }
 
 function GetKDAScore(player)
@@ -922,17 +922,13 @@ function GetKDAScore(player)
     return player.kills / player.deaths;
 }
 
-handlers.GetUserDisplayName = function (args)
+function GetUserDisplayName (playfabID)
 {
     let result = server.GetUserAccountInfo({
-        PlayFabId: args.playfabID
+        PlayFabId: playfabID
     });
 
-    //.DisplayName.Value;
-    let a = {
-        "a" : result.UserInfo.TitleInfo.DisplayName
-    }
-    return a;
+    return result.UserInfo.TitleInfo.DisplayName;
 }
 
 handlers.EndMatch = function (args) {
