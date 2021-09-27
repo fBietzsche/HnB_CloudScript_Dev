@@ -1554,20 +1554,15 @@ handlers.GetWeaponsData = function () {
     }
 }
 
-handlers.GetTrophyCount = function (){
-    let currentPlayerTrophy = server.GetPlayerStatistics({
-        PlayFabId: PlayerId,
-        "StatisticNames": "Trophy"
-    });
-
-    return JSON.parse(currentPlayerTrophy.Statistics[0].Value);
-}
-
-handlers.GetWeaponCount = function (){
-
+handlers.GetWeaponAndTrophyCount = function (){
     let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId,
         "Keys": ["itemLevel"]
+    });
+
+    let currentPlayerTrophy = server.GetPlayerStatistics({
+        PlayFabId: currentPlayerId,
+        "StatisticNames": "Trophy"
     });
 
     let itemLevels = JSON.parse(currentPlayerData.Data.itemLevel.Value);
@@ -1582,9 +1577,10 @@ handlers.GetWeaponCount = function (){
     }
 
     return {
+        "trophyCount" : JSON.parse(currentPlayerTrophy.Statistics[0].Value),
         "totalWeaponCount" : WeaponCount,
-        "unlockedWeaponCount" : unlockedWeaponCount,
-    }
+        "unlockedWeaponCount" : unlockedWeaponCount
+    };
 }
 
 //Calculates the weapon value using base value(level 1 value), current level of the weapon, and the increment modifier (see the beginning of file for value named WeaponLevelUpValueModifier);
