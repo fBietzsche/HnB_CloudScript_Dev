@@ -1576,7 +1576,7 @@ handlers.GetWeaponCount = function (){
 
     for (const itemLevel in itemLevels)
     {
-        if(itemLevel.weaponLevel > 0){
+        if(itemLevel["weaponLevel"] > 0){
             unlockedWeaponCount++;
         }
     }
@@ -1584,6 +1584,7 @@ handlers.GetWeaponCount = function (){
     return {
         "totalWeaponCount" : WeaponCount,
         "unlockedWeaponCount" : unlockedWeaponCount,
+        "try": itemLevel.weaponName
     }
 }
 
