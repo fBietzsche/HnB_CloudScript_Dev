@@ -1525,11 +1525,11 @@ handlers.GetWeaponsData = function () {
         currentTrophies.push(itemLevels[i].weaponTrophy ? itemLevels[i].weaponTrophy : 0);
 
 
-        let damage = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].damage, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
-        let alternativeDamage = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].alternativeDamage, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
+        let damage = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].damage, itemLevels[i].weaponLevel, WeaponLevelUpValueModifier);
+        let alternativeDamage = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].alternativeDamage, itemLevels[i].weaponLevel, WeaponLevelUpValueModifier);
         let tempUltiBaseValue = weaponValues[getWeapon(i)].ultiDamageScale * weaponValues[getWeapon(i)].damage;
-        let ultiDamage = CalculateWeaponValueAndNextLevelIncrement(tempUltiBaseValue, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
-        let hitPoint = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].hitPoints, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
+        let ultiDamage = CalculateWeaponValueAndNextLevelIncrement(tempUltiBaseValue, itemLevels[i].weaponLevel, WeaponLevelUpValueModifier);
+        let hitPoint = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].hitPoints, itemLevels[i].weaponLevel, WeaponLevelUpValueModifier);
 
 
         damages.push(damage);
