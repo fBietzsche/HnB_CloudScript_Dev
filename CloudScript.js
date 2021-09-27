@@ -55,13 +55,11 @@ function Slot(isReady, isAvailable, startTime, endTime){
     this.endTime = endTime;
 }
 
-function getWeapon(weapon)
-{
+function getWeapon(weapon) {
     return (typeof weapon === "string") ? parseInt(Object.keys(weapons).find(key => weapons[key] === weapon)) : weapons[weapon];
 }
 
-function getBoombot(boombot)
-{
+function getBoombot(boombot) {
     return (typeof boombot === "string") ? parseInt(Object.keys(boombots).find(key => boombots[key] === boombot)) : boombots[boombot];
 }
 
@@ -504,6 +502,31 @@ function getTimeInSeconds(){
     return new Date().getTime() / 1000;
 }
 
+function GetMVP(winnerPlayers) {
+    let maxKDAIndex = 0;
+    for(let i = 0; i < winnerPlayers.length; i++){
+        if(winnerPlayers[i].KDAScore > winnerPlayers[maxKDAIndex].KDAScore){
+            maxKDAIndex = i;
+        }
+    }
+    return GetUserDisplayName(winnerPlayers[maxKDAIndex].PlayfabID);
+}
+
+function GetKDAScore(player) {
+    player.deaths = player.deaths == 0 ? 0.5 : player.deaths;
+    return player.kills / player.deaths;
+}
+
+function GetUserDisplayName (playfabID) {
+    let result = server.GetUserAccountInfo({
+        PlayFabId: playfabID
+    });
+
+    return result.UserInfo.TitleInfo.DisplayName;
+}
+
+func
+
 handlers.GrantMultipleItems = function(args){
     /* args format
     {
@@ -526,7 +549,6 @@ handlers.GrantMultipleItems = function(args){
     };
     server.GrantItemsToUser(itemToGrant);
 }
-
 
 handlers.UnlockReward = function (args) {
 
@@ -700,8 +722,6 @@ handlers.SlotTester = function (args) {
         }
     }
 }
-
-
 
 handlers.FirstLogin = function () {
     //TODO yeni exp sistemine göre güncellenecek
@@ -903,32 +923,6 @@ handlers.CheckSlots = function (args) {
         "isAvailable": isAvailable,
         "isTutorial": isTutorial
     };
-}
-
-function GetMVP(winnerPlayers)
-{
-    let maxKDAIndex = 0;
-    for(let i = 0; i < winnerPlayers.length; i++){
-        if(winnerPlayers[i].KDAScore > winnerPlayers[maxKDAIndex].KDAScore){
-            maxKDAIndex = i;
-        }
-    }
-    return GetUserDisplayName(winnerPlayers[maxKDAIndex].PlayfabID);
-}
-
-function GetKDAScore(player)
-{
-    player.deaths = player.deaths == 0 ? 0.5 : player.deaths;
-    return player.kills / player.deaths;
-}
-
-function GetUserDisplayName (playfabID)
-{
-    let result = server.GetUserAccountInfo({
-        PlayFabId: playfabID
-    });
-
-    return result.UserInfo.TitleInfo.DisplayName;
 }
 
 handlers.EndMatch = function (args) {
@@ -1466,9 +1460,7 @@ handlers.GetTutorialProgress = function () {
     return currentPlayerData.Data.tutorialProgress;
 }
 
-
-handlers.GetWeaponsData = function ()
-{
+handlers.GetWeaponsData = function () {
     let currentPlayerData = server.GetUserReadOnlyData({
         PlayFabId: currentPlayerId
     });
@@ -1529,5 +1521,3 @@ handlers.GetWeaponsData = function ()
         "requiredCoin": requiredCoinToUpgrade
     }
 }
-
-
