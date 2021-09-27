@@ -15,6 +15,9 @@ const BasicBoxTime = 3600;
 
 const SlotCount = 3;
 
+//weapon values (HP, damage, etc.) will be modified with this value
+const WeaponLevelUpValueModifier = 0.05;
+
 //Don't access directly. Call getBoombot function
 const boombots = {
     0 : "MekaScorp",
@@ -524,8 +527,6 @@ function GetUserDisplayName (playfabID) {
 
     return result.UserInfo.TitleInfo.DisplayName;
 }
-
-func
 
 handlers.GrantMultipleItems = function(args){
     /* args format
@@ -1466,11 +1467,12 @@ handlers.GetWeaponsData = function () {
     });
     let titleData = server.GetTitleData({
         PlayFabId: currentPlayerId,
-        "Keys": "levelData"
+        "Keys": ["levelData", "weaponValues"]
     });
 
     let itemLevels = JSON.parse(currentPlayerData.Data.itemLevel.Value);
     let levelData = JSON.parse(titleData.Data.levelData);
+    let weaponValues = JSON.parse(titleData.Data.weaponValues);
     let levelRamps = levelData.levelRamp;
     let levelCoins = levelData.levelCoin;
 
@@ -1481,8 +1483,16 @@ handlers.GetWeaponsData = function () {
     let currentTrophies = [];
     let canUpgrade = [];
 
+    let damages = [];
+    let alternativeDamages = [];
+    let ultiDamages = [];
+    let hitPoints = [];
+
+
+    //for every weapon
     for(let i = 0; i < WeaponCount; i++)
     {
+        //if the weapon level is max.
         if(itemLevels[i].weaponLevel >= WeaponMaxLevel)
         {
             canUpgrade.push(false);
@@ -1491,17 +1501,20 @@ handlers.GetWeaponsData = function () {
             requiredEXPToUpgrade.push(-1);
             requiredCoinToUpgrade.push(-1);
         }
+        //if weapon level is not max.
         else
         {
             currentLevels.push(itemLevels[i].weaponLevel);
             currentEXPs.push(itemLevels[i].weaponExp);
 
+            //if we have the weapon, a.k.a. it's level is not 0
             if(itemLevels[i].weaponLevel !== 0)
             {
                 requiredEXPToUpgrade.push(parseInt(levelRamps[itemLevels[i].weaponLevel - 1]));
                 requiredCoinToUpgrade.push(parseInt(levelCoins[itemLevels[i].weaponLevel - 1]));
                 canUpgrade.push(requiredEXPToUpgrade[i] <= currentEXPs[i]);
             }
+            //if we don't have the weapon.
             else
             {
                 requiredEXPToUpgrade.push(0);
@@ -1510,7 +1523,21 @@ handlers.GetWeaponsData = function () {
             }
         }
         currentTrophies.push(itemLevels[i].weaponTrophy ? itemLevels[i].weaponTrophy : 0);
+
+
+        let damage = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].damage, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
+        let alternativeDamage = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].alternativeDamage, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
+        let tempUltiBaseValue = weaponValues[getWeapon(i)].ultiDamageScale * weaponValues[getWeapon(i)].damage;
+        let ultiDamage = CalculateWeaponValueAndNextLevelIncrement(tempUltiBaseValue, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
+        let hitPoint = CalculateWeaponValueAndNextLevelIncrement(weaponValues[getWeapon(i)].hitPoints, itemLevels[i].itemLevel, WeaponLevelUpValueModifier);
+
+
+        damages.push(damage);
+        alternativeDamages.push(alternativeDamage);
+        ultiDamages.push(ultiDamage);
+        hitPoints.push(hitPoint);
     }
+
 
     return {
         "canUpgrade": canUpgrade,
@@ -1518,6 +1545,19 @@ handlers.GetWeaponsData = function () {
         "currentExp": currentEXPs,
         "currentTrophy" : currentTrophies,
         "requiredExp": requiredEXPToUpgrade,
-        "requiredCoin": requiredCoinToUpgrade
+        "requiredCoin": requiredCoinToUpgrade,
+
+        "primaryDamages" : damages,
+        "secondaryDamages" : alternativeDamages,
+        "ultimateDamages" : ultiDamages,
+        "healths" : hitPoints
+    }
+}
+
+//Calculates the weapon value using base value(level 1 value), current level of the weapon, and the increment modifier (see the beginning of file for value named WeaponLevelUpValueModifier);
+function CalculateWeaponValueAndNextLevelIncrement(baseValue, level, modifier){
+    return {
+        "value" : Math.round(baseValue + (baseValue * (level - 1) * modifier)),
+        "nextLevelIncrement" : Math.round(baseValue + (baseValue * (level) * modifier)) - Math.round(baseValue + (baseValue * (level - 1) * modifier))
     }
 }
