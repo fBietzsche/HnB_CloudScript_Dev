@@ -1579,6 +1579,7 @@ handlers.GetWeaponCount = function (){
         if(itemLevel.weaponLevel > 0){
             unlockedWeaponCount++;
         }
+        unlockedWeaponCount++;
     }
 
     return {
