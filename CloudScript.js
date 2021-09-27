@@ -1584,7 +1584,7 @@ handlers.GetWeaponCount = function (){
     return {
         "totalWeaponCount" : WeaponCount,
         "unlockedWeaponCount" : unlockedWeaponCount,
-        "try": itemLevel.weaponName
+        "try": itemLevels[0].weaponName
     }
 }
 
