@@ -1554,6 +1554,39 @@ handlers.GetWeaponsData = function () {
     }
 }
 
+handlers.GetTrophyCount = function (){
+    let currentPlayerTrophy = server.GetPlayerStatistics({
+        PlayFabId: PlayerId,
+        "StatisticNames": "Trophy"
+    });
+
+    return JSON.parse(currentPlayerTrophy.Statistics[0].Value);
+}
+
+handlers.GetWeaponCount = function (){
+
+    let currentPlayerData = server.GetUserReadOnlyData({
+        PlayFabId: currentPlayerId,
+        "Keys": ["itemLevel"]
+    });
+
+    let itemLevels = JSON.parse(currentPlayerData.Data.itemLevel.Value);
+
+    let unlockedWeaponCount = 0;
+
+    for (const itemLevel in itemLevels)
+    {
+        if(itemLevel.weaponLevel > 0){
+            unlockedWeaponCount++;
+        }
+    }
+
+    return {
+        "totalWeaponCount" : WeaponCount,
+        "unlockedWeaponCount" : unlockedWeaponCount
+    }
+}
+
 //Calculates the weapon value using base value(level 1 value), current level of the weapon, and the increment modifier (see the beginning of file for value named WeaponLevelUpValueModifier);
 function CalculateWeaponValueAndNextLevelIncrement(baseValue, level, modifier){
     return {
