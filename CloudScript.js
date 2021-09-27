@@ -765,7 +765,7 @@ handlers.FirstLogin = function () {
     }
 
     for (let i = 0; i < WeaponCount; i++) {
-        itemLevel.push(new Weapon(i + 1, getWeapon(i), 0, 0, 0, false));
+        itemLevel.push(new Weapon(i, getWeapon(i), 0, 0, 0, false));
     }
 
     configs[0].playerHasBoombot = true;
@@ -1579,13 +1579,11 @@ handlers.GetWeaponCount = function (){
         if(itemLevel.weaponLevel > 0){
             unlockedWeaponCount++;
         }
-        unlockedWeaponCount++;
     }
 
     return {
         "totalWeaponCount" : WeaponCount,
         "unlockedWeaponCount" : unlockedWeaponCount,
-        "try" : itemLevels[0]
     }
 }
 
