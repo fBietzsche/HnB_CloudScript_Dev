@@ -603,7 +603,7 @@ handlers.GiveTrophyRoadReward = function (args){
 
             return { "isRewarded": 1 }
         }
-        return { "isRewarded": -1 }
+        return { "isRewarded": -1, "haha" : progressRewards[rewardIndex] }
     }
 
     return { "isRewarded": 0, "haha" : progressRewards };
