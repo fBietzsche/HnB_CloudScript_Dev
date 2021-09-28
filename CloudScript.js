@@ -572,10 +572,12 @@ handlers.GiveTrophyRoadReward = function (args){
         PlayFabId: currentPlayerId
     });
 
-    let progressRewards = server.GetTitleData({
+    let titleData = server.GetTitleData({
         PlayFabId: currentPlayerId,
         "Keys": ["progressRewards"]
-    }).Data.progressRewards;
+    });
+
+    let progressRewards = JSON.parse(titleData.Data.progressRewards.Value);
 
     let rewardIndex = args.rewardIndex;
     let maxTrophy = JSON.parse(currentPlayerData.Data.maxTrophy.Value);
