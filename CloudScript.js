@@ -667,8 +667,8 @@ function UnlockWeapon(weaponId){
     let updateUserReadOnly = {
         PlayFabId : currentPlayerId,
         Data : {
-            "configs" : configs,
-            "itemLevel" : itemLevel
+            "configs" : JSON.stringify(configs),
+            "itemLevel" : JSON.stringify(itemLevel)
         }
     };
 
