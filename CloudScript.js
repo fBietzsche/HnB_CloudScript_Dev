@@ -577,7 +577,7 @@ handlers.GiveTrophyRoadReward = function (args){
         "Keys": ["progressRewards"]
     });
 
-    let progressRewards = JSON.parse(titleData.Data.progressRewards.Value);
+    let progressRewards = JSON.parse(titleData.Data.progressRewards);
 
     let rewardIndex = args.rewardIndex;
     let maxTrophy = JSON.parse(currentPlayerData.Data.maxTrophy.Value);
@@ -605,7 +605,7 @@ handlers.GiveTrophyRoadReward = function (args){
         }
     }
 
-    return { "isRewarded": 0, "asd" : args.rewardIndex };
+    return { "isRewarded": 0 };
 }
 
 function GiveReward(currentReward, chosenWeaponForEXP){
