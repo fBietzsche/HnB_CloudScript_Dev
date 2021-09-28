@@ -629,7 +629,7 @@ function GiveReward(currentReward, chosenWeaponForEXP){
         case "Unlock":
             switch (currentReward.RewardType){
                 case "Weapon":
-                    UnlockWeapon(currentReward.Reward);
+                    return UnlockWeapon(currentReward.Reward);
                     break;
                 case "Gamemode":
                     break;
@@ -643,6 +643,8 @@ function UnlockWeapon(weaponId){
         "PlayFabId" : currentPlayerId,
         "Keys" :  ["configs", "itemLevel"]
     });
+
+    return {"haha" : playerData};
 
     let configs = JSON.parse(playerData.Data.configs);
     let itemLevel = JSON.parse(playerData.Data.itemLevel);
