@@ -584,7 +584,7 @@ handlers.GiveTrophyRoadReward = function (args){
     let lastRewardedProgressIndex = JSON.parse(currentPlayerData.Data.lastRewardedProgressIndex.Value);
 
     if(rewardIndex != null && rewardIndex > lastRewardedProgressIndex){
-        if (progressRewards[rewardIndex].ReqThropy <= maxTrophy){
+        if (progressRewards[rewardIndex].ReqTrophy <= maxTrophy){
             let currentRewards = progressRewards[rewardIndex].Rewards;
 
             //foreach icinde butun rewardlari vericez
@@ -603,10 +603,10 @@ handlers.GiveTrophyRoadReward = function (args){
 
             return { "isRewarded": 1 }
         }
-        return { "isRewarded": -1, "haha" : progressRewards[rewardIndex] }
+        //return { "isRewarded": -1, "haha" : progressRewards[rewardIndex] }
     }
 
-    return { "isRewarded": 0, "haha" : progressRewards };
+    return { "isRewarded": 0 };
 }
 
 function GiveReward(currentReward, chosenWeaponForEXP){
