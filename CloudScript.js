@@ -644,8 +644,8 @@ function UnlockWeapon(weaponId){
         "Keys" :  ["configs", "itemLevel"]
     });
 
-    let configs = JSON.parse(playerData.Data.configs.Value);
-    let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
+    let configs = JSON.parse(playerData.Data.configs);
+    let itemLevel = JSON.parse(playerData.Data.itemLevel);
 
     let boombotId = weaponId / 4;
 
