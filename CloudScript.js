@@ -590,7 +590,7 @@ handlers.GiveTrophyRoadReward = function (args){
             //foreach icinde butun rewardlari vericez
 
             for(let i = 0; i < currentRewards.length; i++){
-                GiveReward(currentRewards[i], args.chosenWeaponForEXP);
+                return GiveReward(currentRewards[i], args.chosenWeaponForEXP);
             }
 
             const updateUserReadOnly = {
