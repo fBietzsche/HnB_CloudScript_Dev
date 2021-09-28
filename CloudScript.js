@@ -528,7 +528,7 @@ function GetUserDisplayName (playfabID) {
     return result.UserInfo.TitleInfo.DisplayName;
 }
 
-handlers.GrantMultipleItems = function(args){
+function GrantMultipleItems(itemId, amount){
     /* args format
     {
         "itemId" : "msw_1_experience",
@@ -537,8 +537,6 @@ handlers.GrantMultipleItems = function(args){
     */
 
     let itemIds = [];
-    let itemId = args.itemId;
-    let amount = args.amount;
     for (let i = 0; i < amount; i++){
         itemIds.push(itemId);
     }
@@ -549,6 +547,121 @@ handlers.GrantMultipleItems = function(args){
         "ItemIds": itemIds
     };
     server.GrantItemsToUser(itemToGrant);
+}
+
+function GrantCurrency(currency, amount){
+    server.AddUserVirtualCurrency(
+        {
+            "PlayFabId" : currentPlayerId,
+            "VirtualCurrency" : currency,
+            "Amount" : amount
+        }
+    );
+}
+
+handlers.GiveTrophyRoadReward = function (args){
+    /*
+        {
+            "rewardIndex" : number,
+            "chosenWeaponEXP" :
+        }
+     */
+
+
+    let currentPlayerData = server.GetUserReadOnlyData({
+        PlayFabId: currentPlayerId
+    });
+
+    let progressRewards = server.GetTitleData({
+        PlayFabId: currentPlayerId,
+        "Keys": ["progressRewards"]
+    }).Data.progressRewards;
+
+    let rewardIndex = args.rewardIndex;
+    let maxTrophy = JSON.parse(currentPlayerData.Data.maxTrophy.Value);
+    let lastRewardedProgressIndex = JSON.parse(currentPlayerData.Data.lastRewardedProgressIndex.Value);
+
+    if(rewardIndex != null && rewardIndex > lastRewardedProgressIndex){
+        if (progressRewards[rewardIndex].ReqThropy <= maxTrophy){
+            let currentRewards = progressRewards[rewardIndex].Rewards;
+
+            //foreach icinde butun rewardlari vericez
+
+            for(let i = 0; i < currentRewards.length; i++){
+                GiveReward(currentRewards[i], args.chosenWeaponForEXP);
+            }
+
+            const updateUserReadOnly = {
+                PlayFabId: currentPlayerId,
+                Data: {
+                    "lastRewardedProgressIndex": rewardIndex,
+                }
+            }
+            server.UpdateUserReadOnlyData(updateUserReadOnly);
+
+            return { "isRewarded": 1 }
+        }
+    }
+
+    return { "isRewarded": 0 };
+}
+
+function GiveReward(currentReward, chosenWeaponForEXP){
+    switch (currentReward.RewardingAction)
+    {
+        case "Grant":
+            switch (currentReward.RewardType)
+            {
+                case "Item":
+                    GrantMultipleItems(currentReward.Reward, currentReward.Amount);
+                    break;
+                case "ChoosableEXP":
+                    GrantMultipleItems(chosenWeaponForEXP + "_exp", currentReward.Amount);
+                    break;
+                case "Currency":
+                    GrantCurrency(currentReward.Reward, currentReward.Amount)
+                    break;
+            }
+            break;
+        case "Unlock":
+            switch (currentReward.RewardType){
+                case "Weapon":
+                    UnlockWeapon(currentReward.Reward);
+                    break;
+                case "Gamemode":
+                    break;
+            }
+            break;
+    }
+}
+
+function UnlockWeapon(weaponId){
+    let playerData = server.GetUserReadOnlyData({
+        "PlayFabId" : currentPlayerId,
+        "Keys" :  ["configs", "itemLevel"]
+    });
+
+    let configs = JSON.parse(playerData.Data.configs.Value);
+    let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
+
+    let boombotId = weaponId / 4;
+
+    if(configs[boombotId].playerHasBoombot === false){
+        GrantMultipleItems(getBoombot(boombotId), 1);
+        configs[boombotId].playerHasBoombot = true;
+    }
+
+    if(itemLevel[weaponId].weaponLevel === 0){
+        GrantMultipleItems(getWeapon(weaponId), 1);
+        itemLevel[weaponId].weaponLevel = 1;
+    }
+
+    let updateUserReadOnly = {
+        "configs" : configs,
+        "itemLevel" : itemLevel
+    };
+
+    server.UpdateUserReadOnlyData(updateUserReadOnly);
 }
 
 handlers.UnlockReward = function (args) {
