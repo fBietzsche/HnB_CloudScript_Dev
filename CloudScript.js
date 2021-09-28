@@ -541,6 +541,7 @@ function GrantMultipleItems(itemId, amount){
         itemIds.push(itemId);
     }
 
+    log.debug("testing: "  + itemId);
 
     let itemToGrant = {
         "PlayFabId": currentPlayerId,
@@ -618,7 +619,6 @@ function GiveReward(currentReward, chosenWeaponForEXP){
                     GrantMultipleItems(currentReward.Reward, currentReward.Amount);
                     break;
                 case "ChoosableEXP":
-                    log.debug("testing: "  + chosenWeaponForEXP + "_exp");
                     GrantMultipleItems(chosenWeaponForEXP + "_exp", currentReward.Amount);
                     break;
                 case "Currency":
