@@ -618,7 +618,7 @@ function GiveReward(currentReward, chosenWeaponForEXP){
                     GrantMultipleItems(currentReward.Reward, currentReward.Amount);
                     break;
                 case "ChoosableEXP":
-                    log.debug(chosenWeaponForEXP + "_exp");
+                    log.debug("testing: "  + chosenWeaponForEXP + "_exp");
                     GrantMultipleItems(chosenWeaponForEXP + "_exp", currentReward.Amount);
                     break;
                 case "Currency":
