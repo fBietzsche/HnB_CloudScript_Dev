@@ -646,7 +646,7 @@ function UnlockWeapon(weaponId){
     let configs = JSON.parse(playerData.Data.configs.Value);
     let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
 
-    let boombotId = weaponId / 4;
+    let boombotId = Math.floor(weaponId / 4);
 
     if(configs[boombotId].playerHasBoombot === false){
         GrantMultipleItems(getBoombot(boombotId), 1);
