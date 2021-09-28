@@ -603,7 +603,6 @@ handlers.GiveTrophyRoadReward = function (args){
 
             return { "isRewarded": 1 }
         }
-        return { "isRewarded": -1, "haha" : progressRewards[rewardIndex] }
     }
 
     return { "isRewarded": 0 };
@@ -851,7 +850,7 @@ handlers.FirstLogin = function () {
 
     // TODO Max Trophy
     let maxTrophy = 0;
-    let lastRewardedProgressIndex = 0;
+    let lastRewardedProgressIndex = -1;
     let starterBoxProgress = 0;
     let accountExp = [1, 0];
     let doubleBattery = 0;
