@@ -648,6 +648,10 @@ function UnlockWeapon(weaponId){
 
     let boombotId = Math.floor(weaponId / 4);
 
+    log.debug("boombotId : " + boombotId);
+    log.debug("weaponId : " + weaponId);
+    log.debug("weaponName : " + getWeapon(weaponId));
+
     if(configs[boombotId].playerHasBoombot === false){
         GrantMultipleItems(getBoombot(boombotId), 1);
         configs[boombotId].playerHasBoombot = true;
