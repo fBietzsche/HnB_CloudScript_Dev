@@ -649,7 +649,9 @@ function UnlockWeapon(weaponId){
     let boombotId = Math.floor(weaponId / 4);
 
     log.debug("boombotId : " + boombotId);
+    log.debug("typeof boombotId : " + typeof boombotId);
     log.debug("weaponId : " + weaponId);
+    log.debug("typeof weaponId : " + typeof weaponId);
     log.debug("weaponName : " + getWeapon(weaponId));
 
     if(configs[boombotId].playerHasBoombot === false){
