@@ -563,7 +563,7 @@ handlers.GiveTrophyRoadReward = function (args){
     /*
         {
             "rewardIndex" : number,
-            "chosenWeaponEXP" :
+            "chosenWeaponForEXP" : number (weaponid)
         }
      */
 
@@ -603,7 +603,7 @@ handlers.GiveTrophyRoadReward = function (args){
         }
     }
 
-    return { "isRewarded": 0 };
+    return { "isRewarded": 0, "asd" : args.rewardIndex };
 }
 
 function GiveReward(currentReward, chosenWeaponForEXP){
