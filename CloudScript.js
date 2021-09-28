@@ -665,8 +665,11 @@ function UnlockWeapon(weaponId){
     }
 
     let updateUserReadOnly = {
-        "configs" : configs,
-        "itemLevel" : itemLevel
+        "PlayFabId" : currentPlayerId,
+        Data : {
+            "configs" : configs,
+            "itemLevel" : itemLevel
+        }
     };
 
     server.UpdateUserReadOnlyData(updateUserReadOnly);
