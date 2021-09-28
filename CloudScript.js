@@ -590,7 +590,7 @@ handlers.GiveTrophyRoadReward = function (args){
             //foreach icinde butun rewardlari vericez
 
             for(let i = 0; i < currentRewards.length; i++){
-                return GiveReward(currentRewards[i], args.chosenWeaponForEXP);
+                GiveReward(currentRewards[i], args.chosenWeaponForEXP);
             }
 
             const updateUserReadOnly = {
@@ -629,7 +629,7 @@ function GiveReward(currentReward, chosenWeaponForEXP){
         case "Unlock":
             switch (currentReward.RewardType){
                 case "Weapon":
-                    return UnlockWeapon(currentReward.Reward);
+                    UnlockWeapon(currentReward.Reward);
                     break;
                 case "Gamemode":
                     break;
@@ -644,10 +644,8 @@ function UnlockWeapon(weaponId){
         "Keys" :  ["configs", "itemLevel"]
     });
 
-    return {"haha" : playerData};
-
-    let configs = JSON.parse(playerData.Data.configs);
-    let itemLevel = JSON.parse(playerData.Data.itemLevel);
+    let configs = JSON.parse(playerData.Data.configs.Value);
+    let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
 
     let boombotId = weaponId / 4;
 
