@@ -559,7 +559,7 @@ function GiveReward(currentReward, chosenWeaponForEXP){
                     GrantCurrency(currentReward.Reward, currentReward.Amount)
                     break;
                 case "DoubleBattery":
-                    GrantDoubleBatteries(increment);
+                    GrantDoubleBatteries(currentReward.Amount);
                     break;
             }
             break;
