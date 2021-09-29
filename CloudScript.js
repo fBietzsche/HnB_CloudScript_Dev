@@ -956,11 +956,11 @@ handlers.FirstLogin = function () {
     let configs = [];
 
     for (let k = 0; k < RobotCount; k++) {
-        configs.push(new Config(k, getBoombot(k), 1, 1, 1, false));
+        configs.push(new Config(k, getBoombot(k), 0, 0, 0, false));
     }
 
     for (let i = 0; i < WeaponCount; i++) {
-        itemLevel.push(new Weapon(i + 1, getWeapon(i), 0, 0, 0, false));
+        itemLevel.push(new Weapon(i, getWeapon(i), 0, 0, 0, false));
     }
 
     configs[0].playerHasBoombot = true;
