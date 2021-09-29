@@ -580,6 +580,15 @@ function UpdateWeaponExp(weaponName, increment){
     let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
 
     itemLevel[getWeapon(weaponName)].weaponExp += increment;
+
+    let updateUserReadOnly = {
+        PlayFabId : currentPlayerId,
+        Data : {
+            "itemLevel" : JSON.stringify(itemLevel)
+        }
+    };
+
+    server.UpdateUserReadOnlyData(updateUserReadOnly);
 }
 
 //unlocks the weapon with given id
