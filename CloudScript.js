@@ -534,12 +534,13 @@ function GetUserDisplayName (playfabID) {
 
 //used by GiveTrophyRoadReward function.
 /*
-currentReward = {
-    "RewardingAction": "Grant",
-    "RewardType": "Item",
-    "Reward": "BasicBox",
-    "Amount": 1
-}
+currentReward =
+        {
+            "RewardingAction": "Grant/Unlock",
+            "RewardType": "Item/Currency/ChoosableEXP",
+            "Reward": "BasicBox/WeaponName/CurrencyCode/ItemId",
+            "Amount": 1
+        }
  */
 function GiveReward(currentReward, chosenWeaponForEXP){
     switch (currentReward.RewardingAction)
@@ -557,6 +558,9 @@ function GiveReward(currentReward, chosenWeaponForEXP){
                 case "Currency":
                     GrantCurrency(currentReward.Reward, currentReward.Amount)
                     break;
+                case "DoubleBattery":
+                    GrantDoubleBatteries(increment);
+                    break;
             }
             break;
         case "Unlock":
@@ -569,6 +573,26 @@ function GiveReward(currentReward, chosenWeaponForEXP){
             }
             break;
     }
+}
+
+function GrantDoubleBatteries(increment){
+    let playerData = server.GetUserReadOnlyData({
+        "PlayFabId" : currentPlayerId,
+        "Keys" :  ["doubleBattery"]
+    });
+
+    let doubleBattery = JSON.parse(playerData.Data.doubleBattery.Value);
+
+    doubleBattery += increment;
+
+    let updateUserReadOnly = {
+        PlayFabId : currentPlayerId,
+        Data : {
+            "doubleBattery" : JSON.stringify(doubleBattery)
+        }
+    };
+
+    server.UpdateUserReadOnlyData(updateUserReadOnly);
 }
 
 function UpdateWeaponExp(weaponName, increment){
@@ -592,7 +616,7 @@ function UpdateWeaponExp(weaponName, increment){
 }
 
 //unlocks the weapon with given id
-function UnlockWeapon(weaponId){
+function UnlockWeapon(weaponName){
     let playerData = server.GetUserReadOnlyData({
         "PlayFabId" : currentPlayerId,
         "Keys" :  ["configs", "itemLevel"]
@@ -601,13 +625,14 @@ function UnlockWeapon(weaponId){
     let configs = JSON.parse(playerData.Data.configs.Value);
     let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
 
+    let weaponId = getWeapon(weaponName);
     let boombotId = Math.floor(weaponId / 4);
 
-    log.debug("boombotId : " + boombotId);
+    /*log.debug("boombotId : " + boombotId);
     log.debug("typeof boombotId : " + typeof boombotId);
     log.debug("weaponId : " + weaponId);
     log.debug("typeof weaponId : " + typeof weaponId);
-    log.debug("weaponName : " + getWeapon(weaponId));
+    log.debug("weaponName : " + getWeapon(weaponId));*/
 
     if(configs[boombotId].playerHasBoombot === false){
         GrantItemMultiple(getBoombot(boombotId), 1);
