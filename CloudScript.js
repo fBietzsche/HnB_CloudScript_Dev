@@ -501,10 +501,12 @@ function Weapon(weaponId, weaponName, weaponLevel, weaponExp, weaponTrophy){
     this.weaponTrophy = weaponTrophy;
 }
 
+//get current time in seconds
 function getTimeInSeconds(){
     return new Date().getTime() / 1000;
 }
 
+//finds the player that has highest KDA among winners
 function GetMVP(winnerPlayers) {
     let maxKDAIndex = 0;
     for(let i = 0; i < winnerPlayers.length; i++){
@@ -515,11 +517,13 @@ function GetMVP(winnerPlayers) {
     return GetUserDisplayName(winnerPlayers[maxKDAIndex].PlayfabID);
 }
 
+//calculates KDA for player
 function GetKDAScore(player) {
     player.deaths = player.deaths == 0 ? 0.5 : player.deaths;
     return player.kills / player.deaths;
 }
 
+//gets user display name using playfabID
 function GetUserDisplayName (playfabID) {
     let result = server.GetUserAccountInfo({
         PlayFabId: playfabID
@@ -528,7 +532,97 @@ function GetUserDisplayName (playfabID) {
     return result.UserInfo.TitleInfo.DisplayName;
 }
 
-function GrantMultipleItems(itemId, amount){
+//used by GiveTrophyRoadReward function.
+/*
+currentReward = {
+    "RewardingAction": "Grant",
+    "RewardType": "Item",
+    "Reward": "BasicBox",
+    "Amount": 1
+}
+ */
+function GiveReward(currentReward, chosenWeaponForEXP){
+    switch (currentReward.RewardingAction)
+    {
+        case "Grant":
+            switch (currentReward.RewardType)
+            {
+                case "Item":
+                    GrantItemMultiple(currentReward.Reward, currentReward.Amount);
+                    break;
+                case "ChoosableEXP":
+                    GrantItemMultiple(chosenWeaponForEXP + "_exp", currentReward.Amount);
+                    UpdateWeaponExp(chosenWeaponForEXP, currentReward.Amount);
+                    break;
+                case "Currency":
+                    GrantCurrency(currentReward.Reward, currentReward.Amount)
+                    break;
+            }
+            break;
+        case "Unlock":
+            switch (currentReward.RewardType){
+                case "Weapon":
+                    UnlockWeapon(currentReward.Reward);
+                    break;
+                case "Gamemode":
+                    break;
+            }
+            break;
+    }
+}
+
+function UpdateWeaponExp(weaponName, increment){
+    let playerData = server.GetUserReadOnlyData({
+        "PlayFabId" : currentPlayerId,
+        "Keys" :  ["itemLevel"]
+    });
+
+    let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
+
+    itemLevel[getWeapon(weaponName)].weaponExp += increment;
+}
+
+//unlocks the weapon with given id
+function UnlockWeapon(weaponId){
+    let playerData = server.GetUserReadOnlyData({
+        "PlayFabId" : currentPlayerId,
+        "Keys" :  ["configs", "itemLevel"]
+    });
+
+    let configs = JSON.parse(playerData.Data.configs.Value);
+    let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
+
+    let boombotId = Math.floor(weaponId / 4);
+
+    log.debug("boombotId : " + boombotId);
+    log.debug("typeof boombotId : " + typeof boombotId);
+    log.debug("weaponId : " + weaponId);
+    log.debug("typeof weaponId : " + typeof weaponId);
+    log.debug("weaponName : " + getWeapon(weaponId));
+
+    if(configs[boombotId].playerHasBoombot === false){
+        GrantItemMultiple(getBoombot(boombotId), 1);
+        configs[boombotId].playerHasBoombot = true;
+    }
+
+    if(itemLevel[weaponId].weaponLevel === 0){
+        GrantItemMultiple(getWeapon(weaponId), 1);
+        itemLevel[weaponId].weaponLevel = 1;
+    }
+
+    let updateUserReadOnly = {
+        PlayFabId : currentPlayerId,
+        Data : {
+            "configs" : JSON.stringify(configs),
+            "itemLevel" : JSON.stringify(itemLevel)
+        }
+    };
+
+    server.UpdateUserReadOnlyData(updateUserReadOnly);
+}
+
+//grants given amount of same item to player
+function GrantItemMultiple(itemId, amount){
     /* args format
     {
         "itemId" : "msw_1_experience",
@@ -550,6 +644,7 @@ function GrantMultipleItems(itemId, amount){
     server.GrantItemsToUser(itemToGrant);
 }
 
+//grants given amount of given currency(2 letter code of currency) to player
 function GrantCurrency(currency, amount){
     server.AddUserVirtualCurrency(
         {
@@ -558,6 +653,14 @@ function GrantCurrency(currency, amount){
             "Amount" : amount
         }
     );
+}
+
+//Calculates the weapon value using base value(level 1 value), current level of the weapon, and the increment modifier (see the beginning of file for value named WeaponLevelUpValueModifier);
+function CalculateWeaponValueAndNextLevelIncrement(baseValue, level, modifier){
+    return {
+        "value" : Math.round(baseValue + (baseValue * (level - 1) * modifier)),
+        "nextLevelIncrement" : Math.round(baseValue + (baseValue * (level) * modifier)) - Math.round(baseValue + (baseValue * (level - 1) * modifier))
+    }
 }
 
 handlers.GiveTrophyRoadReward = function (args){
@@ -607,73 +710,6 @@ handlers.GiveTrophyRoadReward = function (args){
     }
 
     return { "isRewarded": 0 };
-}
-
-function GiveReward(currentReward, chosenWeaponForEXP){
-    switch (currentReward.RewardingAction)
-    {
-        case "Grant":
-            switch (currentReward.RewardType)
-            {
-                case "Item":
-                    GrantMultipleItems(currentReward.Reward, currentReward.Amount);
-                    break;
-                case "ChoosableEXP":
-                    GrantMultipleItems(chosenWeaponForEXP + "_exp", currentReward.Amount);
-                    break;
-                case "Currency":
-                    GrantCurrency(currentReward.Reward, currentReward.Amount)
-                    break;
-            }
-            break;
-        case "Unlock":
-            switch (currentReward.RewardType){
-                case "Weapon":
-                    UnlockWeapon(currentReward.Reward);
-                    break;
-                case "Gamemode":
-                    break;
-            }
-            break;
-    }
-}
-
-function UnlockWeapon(weaponId){
-    let playerData = server.GetUserReadOnlyData({
-        "PlayFabId" : currentPlayerId,
-        "Keys" :  ["configs", "itemLevel"]
-    });
-
-    let configs = JSON.parse(playerData.Data.configs.Value);
-    let itemLevel = JSON.parse(playerData.Data.itemLevel.Value);
-
-    let boombotId = Math.floor(weaponId / 4);
-
-    log.debug("boombotId : " + boombotId);
-    log.debug("typeof boombotId : " + typeof boombotId);
-    log.debug("weaponId : " + weaponId);
-    log.debug("typeof weaponId : " + typeof weaponId);
-    log.debug("weaponName : " + getWeapon(weaponId));
-
-    if(configs[boombotId].playerHasBoombot === false){
-        GrantMultipleItems(getBoombot(boombotId), 1);
-        configs[boombotId].playerHasBoombot = true;
-    }
-
-    if(itemLevel[weaponId].weaponLevel === 0){
-        GrantMultipleItems(getWeapon(weaponId), 1);
-        itemLevel[weaponId].weaponLevel = 1;
-    }
-
-    let updateUserReadOnly = {
-        PlayFabId : currentPlayerId,
-        Data : {
-            "configs" : JSON.stringify(configs),
-            "itemLevel" : JSON.stringify(itemLevel)
-        }
-    };
-
-    server.UpdateUserReadOnlyData(updateUserReadOnly);
 }
 
 handlers.UnlockReward = function (args) {
@@ -1706,12 +1742,4 @@ handlers.GetWeaponAndTrophyCount = function (){
         "totalWeaponCount" : WeaponCount,
         "unlockedWeaponCount" : unlockedWeaponCount
     };
-}
-
-//Calculates the weapon value using base value(level 1 value), current level of the weapon, and the increment modifier (see the beginning of file for value named WeaponLevelUpValueModifier);
-function CalculateWeaponValueAndNextLevelIncrement(baseValue, level, modifier){
-    return {
-        "value" : Math.round(baseValue + (baseValue * (level - 1) * modifier)),
-        "nextLevelIncrement" : Math.round(baseValue + (baseValue * (level) * modifier)) - Math.round(baseValue + (baseValue * (level - 1) * modifier))
-    }
 }
