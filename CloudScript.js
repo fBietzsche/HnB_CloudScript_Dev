@@ -960,7 +960,7 @@ handlers.FirstLogin = function () {
     }
 
     for (let i = 0; i < WeaponCount; i++) {
-        itemLevel.push(new Weapon(i, getWeapon(i), 0, 0, 0, false));
+        itemLevel.push(new Weapon(i + 1, getWeapon(i), 0, 0, 0, false));
     }
 
     configs[0].playerHasBoombot = true;
