@@ -552,7 +552,7 @@ function GiveReward(currentReward, chosenWeaponForEXP){
                     GrantItemMultiple(currentReward.Reward, currentReward.Amount);
                     break;
                 case "ChoosableEXP":
-                    GrantItemMultiple(chosenWeaponForEXP + "_exp", currentReward.Amount);
+                    GrantItemMultiple([chosenWeaponForEXP + "_exp"], currentReward.Amount);
                     UpdateWeaponExp(chosenWeaponForEXP, currentReward.Amount);
                     break;
                 case "Currency":
@@ -575,6 +575,7 @@ function GiveReward(currentReward, chosenWeaponForEXP){
     }
 }
 
+//updates double batteries at player data
 function GrantDoubleBatteries(increment){
     let playerData = server.GetUserReadOnlyData({
         "PlayFabId" : currentPlayerId,
@@ -595,6 +596,7 @@ function GrantDoubleBatteries(increment){
     server.UpdateUserReadOnlyData(updateUserReadOnly);
 }
 
+//updates given weapon's exp at player data
 function UpdateWeaponExp(weaponName, increment){
     let playerData = server.GetUserReadOnlyData({
         "PlayFabId" : currentPlayerId,
@@ -635,12 +637,12 @@ function UnlockWeapon(weaponName){
     log.debug("weaponName : " + getWeapon(weaponId));*/
 
     if(configs[boombotId].playerHasBoombot === false){
-        GrantItemMultiple(getBoombot(boombotId), 1);
+        GrantItemMultiple([getBoombot(boombotId)], [1]);
         configs[boombotId].playerHasBoombot = true;
     }
 
     if(itemLevel[weaponId].weaponLevel === 0){
-        GrantItemMultiple(getWeapon(weaponId), 1);
+        GrantItemMultiple([getWeapon(weaponId)], [1]);
         itemLevel[weaponId].weaponLevel = 1;
     }
 
@@ -656,20 +658,21 @@ function UnlockWeapon(weaponName){
 }
 
 //grants given amount of same item to player
-function GrantItemMultiple(itemId, amount){
+function GrantItemMultiple(itemIdArray, amountArray){
     /* args format
     {
-        "itemId" : "msw_1_experience",
-        "amount" : 12
+        "itemIdArray" : ["BasicBox", "BasicBoxKey"]
+        "amount" : [1, 1]
     }
     */
 
     let itemIds = [];
-    for (let i = 0; i < amount; i++){
-        itemIds.push(itemId);
-    }
 
-    log.debug("testing: "  + itemId);
+    for (let i = 0; i < itemIdArray.length; i++){
+        for(let j = 0; j < amountArray[i]; j++){
+            itemIds.push(itemIdArray[i]);
+        }
+    }
 
     let itemToGrant = {
         "PlayFabId": currentPlayerId,
